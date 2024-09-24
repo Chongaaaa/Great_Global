@@ -39,10 +39,17 @@ App = {
       App.contracts.ClaimProcessing.setProvider(App.web3Provider);
     });
 
+    $.getJSON("UserAuth.json", function (data) {
+      var UserAuthArtifact = data;
+      App.contracts.UserAuth = TruffleContract(UserAuthArtifact);
+      App.contracts.UserAuth.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 
   bindEvents: function () {
+    // Claims Module
     $(document).on("click", "#addAdminBtn", App.handleAddAdmin);
     $(document).on("click", "#addUserBtn", App.handleAddUser);
     $(document).on("click", "#addClaimBtn", App.handleAddClaim);
@@ -59,8 +66,15 @@ App = {
       App.handleViewAllUnprocessedClaims
     );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
+
+
+    // User Module
+    $(document).on("click", "#registerBtn", App.handleRegister);
+    $(document).on("click", "#signinBtn", App.handleSignin);
+    $(document).on("click", "#resetpwBtn", App.handleReset);
   },
 
+  // Claim Module
   handleAddAdmin: async function (event) {
     event.preventDefault();
 
@@ -241,6 +255,82 @@ App = {
         console.error(err.message);
       }
     });
+  },
+
+  handleRegister: async function (event) {
+    event.preventDefault();
+
+    const name = $("#signupName").val();
+    const email = $("#signupEmail").val();
+    const age = $("#signupAge").val();
+    const password = $("#signupPassword").val();
+    const instance = await App.contracts.UserAuth.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+
+      try {
+        await instance.register(name, email, age, password, { from: account });
+        alert("User added successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleSignin: async function (event) {
+    event.preventDefault();
+
+    try {
+      console.log(Web3.version);
+      const identifier = document.getElementById("signinIdentifier").value; // Can be email or name
+      const password = document.getElementById("signinPassword").value;
+
+      if (!identifier || !password) {
+        alert("Please enter all required fields.");
+        return;
+      }
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      await contract.methods
+        .signIn(identifier, password)
+        .call({ from: accounts[0] });
+
+      alert("Sign in successful!");
+    } catch (error) {
+      alert("Invalid Name or Password.");
+    }
+  },
+
+  handleReset: async function (event) {
+    event.preventDefault();
+
+    try {
+      const identifier = document.getElementById("resetIdentifier").value; // Can be email or address
+      const newPassword = document.getElementById("newPassword").value;
+
+      if (!identifier || !newPassword) {
+        alert("Please enter all required fields.");
+        return;
+      }
+
+      // Fetch accounts only if not already connected
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      // Send the transaction once, check for connected account and address match
+      await contract.methods
+        .resetPassword(identifier, newPassword)
+        .send({ from: accounts[0] });
+
+      alert("Password reset successfully!");
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      alert("Failed to reset password.");
+    }
   },
 };
 

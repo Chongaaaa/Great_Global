@@ -13,7 +13,7 @@ contract UserAuth {
     mapping(address => User) public users;
     mapping(string => address) private emailToAddress;
     mapping(string => address) private nameToAddress;
-
+    
     address[] public registeredUsers; // External array to store all registered users' addresses
 
     event UserRegistered(
@@ -27,7 +27,10 @@ contract UserAuth {
         bytes32 oldHashedPassword,
         bytes32 newHashedPassword
     );
-    event InsuranceSubscribed(address indexed userAddress, uint256 insuranceId);
+    event InsuranceSubscribed(
+        address indexed userAddress,
+        uint256 insuranceId
+    );
 
     // Register a new user with additional attributes and hashed password
     function register(

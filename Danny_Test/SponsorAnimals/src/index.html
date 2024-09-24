@@ -1,81 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Claims</title>
-
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockchain Authentication</title>
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <!-- Link to custom stylesheet -->
   </head>
   <body>
     <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-push-2">
-          <h1 class="text-center">Claims Page</h1>
-          <hr />
-          <br />
-        </div>
+      <div class="header">
+        <h1>Welcome to Great Global</h1>
+        <p>Your health and wellness is our concern</p>
       </div>
 
-      <h3>Add Admin</h3>
-      <input type="text" id="adminAddress" placeholder="Admin Address" />
-      <button id="addAdminBtn">Add Admin</button>
-
-      <!-- Add User Section -->
-      <h3>Add User</h3>
-      <input type="text" id="addUserAddress" placeholder="User Address" />
-      <button id="addUserBtn">Add User</button>
-
-      <!-- Add Claim Section -->
-      <h3>Add Claim</h3>
-      <input type="text" id="claimAmount" placeholder="Claim Amount (ETH)" />
-      <button id="addClaimBtn">Submit Claim</button>
-
-      <!-- Process Claims Section -->
-      <h3>Approve/Reject Claims</h3>
-      <div id="claimsList">
-        <input type="text" id="approveUserAddress" placeholder="User Address" />
-        <br /><br />
-        <input type="text" id="claimId" placeholder="Claim ID" />
-        <br /><br />
-        <button id="approveClaimBtn">Approve Claim</button>
-        <button id="rejectClaimBtn">Reject Claim</button>
+      <!-- Navigation for toggling between forms -->
+      <div class="nav-buttons">
+        <button onclick="showForm('signup')">Sign Up</button>
+        <button onclick="showForm('signin')">Sign In</button>
+        <button onclick="showForm('reset')">Reset Password</button>
       </div>
 
-      <!-- Unprocessed Claims for a User -->
-      <h3>View All Unprocessed Claims for a Single User</h3>
-      <input
-        type="text"
-        id="viewClaimsUserAddress"
-        placeholder="User Address"
-      />
-      <br /><br />
-      <button id="viewUnprocessedClaimsBtn">View Unprocessed Claims</button>
-      <div id="unprocessedClaims"></div>
+      <!-- Sign Up Form -->
+      <div id="signup-form" class="form-container">
+        <h2>Sign Up</h2>
+        <input type="text" id="signupName" placeholder="Full Name" required />
+        <input type="email" id="signupEmail" placeholder="Email" required />
+        <input type="number" id="signupAge" placeholder="Age" required />
+        <input
+          type="password"
+          id="signupPassword"
+          placeholder="Password"
+          required
+        />
+        <button id="registerBtn">Sign Up</button>
+      </div>
 
-      <!-- Unprocessed Claims for All Users -->
-      <h3>View All Unprocessed Claims</h3>
-      <button id="viewAllUnprocessedClaimsBtn">
-        View All Unprocessed Claims
-      </button>
-      <div id="allUnprocessedClaims"></div>
+      <!-- Sign In Form -->
+      <div id="signin-form" class="form-container" style="display: none">
+        <h2>Sign In</h2>
+        <input
+          type="text"
+          id="signinIdentifier"
+          placeholder="Email or Name"
+          required
+        />
+        <input
+          type="password"
+          id="signinPassword"
+          placeholder="Password"
+          required
+        />
+        <button id="signinBtn">Sign In</button>
+      </div>
 
-      <!-- Send Funds Section (Debug) -->
-      <h3>Send Funds (Debug)</h3>
-      <input type="text" id="fundAmount" placeholder="Send Funds (ETH)" />
-      <button id="sendFundsBtn">Send Funds</button>
+      <!-- Reset Password Form -->
+      <div id="reset-form" class="form-container" style="display: none">
+        <h2>Reset Password</h2>
+        <input
+          type="text"
+          id="resetIdentifier"
+          placeholder="Email or Address"
+          required
+        />
+        <input
+          type="password"
+          id="newPassword"
+          placeholder="New Password"
+          required
+        />
+        <button id="resetpwBtn">Reset Password</button>
+      </div>
     </div>
 
+    <script>
+      // Show the correct form and hide others
+      function showForm(formName) {
+        document.getElementById("signup-form").style.display =
+          formName === "signup" ? "block" : "none";
+        document.getElementById("signin-form").style.display =
+          formName === "signin" ? "block" : "none";
+        document.getElementById("reset-form").style.display =
+          formName === "reset" ? "block" : "none";
+      }
+    </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
