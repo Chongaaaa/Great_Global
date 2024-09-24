@@ -1,0 +1,67 @@
+[
+  {
+    "id": 0,
+    "name": "Samba",
+    "picture": "images/Samba.jpg",
+    "age": 20,
+    "fee": 5,
+    "location": "Lion, Zoo Malaysia"
+  },
+  {
+    "id": 1,
+    "name": "Choki",
+    "picture": "images/Choki.jpg",
+    "age": 9,
+    "fee": 5,
+    "location": "OrangHutan,Zoo Malaysia"
+  },
+  {
+    "id": 2,
+    "name": "Mango",
+    "picture": "images/Mango.jpeg",
+    "age": 5,
+    "fee": 5,
+    "location": "Bear, Zoo Malaysia"
+  },
+  {
+    "id": 3,
+    "name": "White Tiger",
+    "picture": "images/WhiteTiger.jpg",
+    "age": 5,
+    "fee": 5,
+    "location": "White Tiger, Zoo Malaysia"
+  },
+  {
+    "id": 4,
+    "name": "Yi Yi",
+    "picture": "images/YiYi.jpg",
+    "age": 6,
+    "fee": 5,
+    "location": "Panda, Zoo Malaysia"
+  },
+  {
+    "id": 5,
+    "name": "Jati",
+    "picture": "images/Jati.jpeg",
+    "age": 3,
+    "fee": 5,
+    "location": "Tiger, Zoo Malaysia"
+  },
+  {
+    "id": 6,
+    "name": "Sibol",
+    "picture": "images/Sibol.jpg",
+    "age": 2,
+    "fee": 5,
+    "location": "Elephant, Zoo Malaysia"
+  },
+  {
+    "id": 7,
+    "name": "Giraffe",
+    "picture": "images/Giraffe.jpg",
+    "age": 7,
+    "fee": 5,
+    "location": "Giraffe, Zoo Malaysia"
+  }
+
+]
