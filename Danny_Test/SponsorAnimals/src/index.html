@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Sponsor/Adoption of Animal</title>
+    <title>Claims</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet" />
@@ -21,51 +21,46 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-sm-8 col-sm-push-2">
-          <h1 class="text-center">Sponsor/Adoption of Animal, Zoo Negara</h1>
+          <h1 class="text-center">Claims Page</h1>
           <hr />
-          <a href="test.html">Go to Test</a>
           <br />
         </div>
       </div>
 
-      <div id="animalsRow" class="row">
-        <!-- ANIMALS LOAD HERE -->
-      </div>
-    </div>
+      <h3>Add Admin</h3>
+      <input type="text" id="adminAddress" placeholder="Admin Address" />
+      <button id="addAdminBtn">Add Admin</button>
 
-    <div id="animalsTemplate" style="display: none">
-      <div class="col-sm-6 col-md-4 col-lg-3">
-        <div class="panel panel-default panel-animals">
-          <div class="panel-heading">
-            <h3 class="panel-title">Display Animal Photo</h3>
-          </div>
-          <div class="panel-body">
-            <img
-              alt="140x140"
-              data-src="holder.js/140x140"
-              class="img-rounded img-center"
-              style="width: 100%"
-              src="  "
-              data-holder-rendered="true"
-            />
-            <br />
-            <strong>ID</strong>: <span class="animals-id">Animal ID</span><br />
-            <strong>Name</strong>: <span class="animals-name">Animal Name</span
-            ><br />
-            <strong>Age</strong>: <span class="animals-age">3</span><br />
-            <strong>Fee</strong>: <span class="animals-fee">eth</span><br />
-            <strong>Location</strong>:
-            <span class="animals-location">Location</span><br />
-            <button class="btn btn-default btn-adopt" type="button" data-id="0">
-              Adopt</button
-            ><br />
-            <strong style="font-size: xx-small">Address</strong>:
-            <span class="sponsor-address" style="font-size: xx-small"
-              >Sponsor Address</span
-            ><br />
-          </div>
-        </div>
+      <!-- Add User Section -->
+      <h3>Add User</h3>
+      <input type="text" id="userAddress" placeholder="User Address" />
+      <button id="addUserBtn">Add User</button>
+
+      <!-- Add Claim Section -->
+      <h3>Add Claim</h3>
+      <input type="text" id="claimAmount" placeholder="Claim Amount (ETH)" />
+      <button id="addClaimBtn">Submit Claim</button>
+
+      <!-- Process Claims Section -->
+      <h3>Approve/Reject Claims</h3>
+      <div id="claimsList">
+        <input type="text" id="userAddress" placeholder="User Address" />
+        <br /><br />
+        <input type="text" id="claimId" placeholder="Claim ID" />
+        <br /><br />
+        <button id="approveClaimBtn">Approve Claim</button>
+        <button id="rejectClaimBtn">Reject Claim</button>
       </div>
+
+      <!-- Unprocessed Claims for All Users -->
+      <h3>View All Unprocessed Claims</h3>
+      <button id="viewUnprocessedClaimsBtn">View All Unprocessed Claims</button>
+      <div id="allUnprocessedClaims"></div>
+
+      <!-- Send Funds Section (Debug) -->
+      <h3>Send Funds (Debug)</h3>
+      <input type="text" id="fundAmount" placeholder="Send Funds (ETH)" />
+      <button id="sendFundsBtn">Send Funds</button>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

@@ -150,7 +150,7 @@ contract ClaimProcessing {
         public
         view
         onlyAdmins
-        returns (address[] memory, uint256[] memory)
+        returns (address[] memory, uint256[] memory, uint256[] memory)
     {
         uint256 totalUnprocessed = 0;
 
@@ -167,6 +167,7 @@ contract ClaimProcessing {
 
         address[] memory userAddresses = new address[](totalUnprocessed);
         uint256[] memory claimIds = new uint256[](totalUnprocessed);
+        uint256[] memory claimAmount = new uint256[](totalUnprocessed);
         uint256 index = 0;
 
         for (uint256 j = 0; j < users.length; j++) {
@@ -177,12 +178,13 @@ contract ClaimProcessing {
                 if (!claims[user][i].isProcessed) {
                     userAddresses[index] = user;
                     claimIds[index] = i;
+                    claimAmount[index] = claims[user][i].amount;
                     index++;
                 }
             }
         }
 
-        return (userAddresses, claimIds);
+        return (userAddresses, claimIds, claimAmount);
     }
 
     function fund() public payable onlyAdmins {
