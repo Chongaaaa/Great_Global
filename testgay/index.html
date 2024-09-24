@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Authentication</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to custom stylesheet -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Great Global</h1>
+            <p>Your health and wellness is our concern</p>
+        </div>
+
+        <!-- Navigation for toggling between forms -->
+        <div class="nav-buttons">
+            <button onclick="showForm('signup')">Sign Up</button>
+            <button onclick="showForm('signin')">Sign In</button>
+            <button onclick="showForm('reset')">Reset Password</button>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signup-form" class="form-container">
+            <h2>Sign Up</h2>
+            <input type="text" id="signupName" placeholder="Full Name" required />
+            <input type="email" id="signupEmail" placeholder="Email" required />
+            <input type="number" id="signupAge" placeholder="Age" required />
+            <input type="password" id="signupPassword" placeholder="Password" required />
+            <button id="registerBtn">Sign Up</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <div id="signin-form" class="form-container" style="display:none;">
+            <h2>Sign In</h2>
+            <input type="text" id="signinIdentifier" placeholder="Email or Name" required />
+            <input type="password" id="signinPassword" placeholder="Password" required />
+            <button id="signinBtn">Sign In</button>
+        </div>
+
+        <!-- Reset Password Form -->
+        <div id="reset-form" class="form-container" style="display:none;">
+            <h2>Reset Password</h2>
+            <input type="text" id="resetIdentifier" placeholder="Email or Address" required />
+            <input type="password" id="newPassword" placeholder="New Password" required />
+            <button id="resetpwBtn">Reset Password</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Show the correct form and hide others
+        function showForm(formName) {
+            document.getElementById('signup-form').style.display = formName === 'signup' ? 'block' : 'none';
+            document.getElementById('signin-form').style.display = formName === 'signin' ? 'block' : 'none';
+            document.getElementById('reset-form').style.display = formName === 'reset' ? 'block' : 'none';
+        }
+    </script>
+
+</body>
+</html>
