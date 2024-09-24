@@ -257,6 +257,8 @@ App = {
     });
   },
 
+  // User Module
+
   handleRegister: async function (event) {
     event.preventDefault();
 
