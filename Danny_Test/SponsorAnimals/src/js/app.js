@@ -53,6 +53,11 @@ App = {
       "#viewUnprocessedClaimsBtn",
       App.handleViewUnprocessedClaims
     );
+    $(document).on(
+      "click",
+      "#viewAllUnprocessedClaimsBtn",
+      App.handleViewAllUnprocessedClaims
+    );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
   },
 
@@ -78,7 +83,7 @@ App = {
   handleAddUser: async function (event) {
     event.preventDefault();
 
-    const userAddress = $("#userAddress").val();
+    const userAddress = $("#addUserAddress").val();
     const instance = await App.contracts.ClaimProcessing.deployed();
 
     web3.eth.getAccounts(async function (error, accounts) {
@@ -118,7 +123,7 @@ App = {
   handleApproveClaim: async function (event) {
     event.preventDefault();
 
-    const userAddress = $("#userAddress").val();
+    const userAddress = $("#approveUserAddress").val();
     const claimId = $("#claimId").val();
     const instance = await App.contracts.ClaimProcessing.deployed();
 
@@ -166,6 +171,35 @@ App = {
 
     try {
       console.log(Web3.version);
+      const userAddress = $("#viewClaimsUserAddress").val();
+      const [claimIds, claimAmount] = await instance.getUnprocessedClaims(userAddress, {
+        from: web3.eth.accounts[0],
+      });
+
+      // Clear the div before adding new content
+      $("#unprocessedClaims").html("");
+
+      if (claimIds.length === 0) {
+        $("#unprocessedClaims").append(`<p>No unprocessed claims found.</p>`);
+      } else {
+        for (let i = 0; i < claimIds.length; i++) {
+          $("#unprocessedClaims").append(
+            `<p>Claim ID: ${claimIds[i]} - Claim Amount: ${claimAmount[i] / 1e18} ETH</p>`
+          );
+        }
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  },
+
+  handleViewAllUnprocessedClaims: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.ClaimProcessing.deployed();
+
+    try {
+      console.log(Web3.version);
       const [userAddresses, claimIds, claimAmount] = await instance.getAllUnprocessedClaims({
         from: web3.eth.accounts[0],
       });
@@ -173,10 +207,14 @@ App = {
       // Clear the div before adding new content
       $("#allUnprocessedClaims").html("");
 
-      for (let i = 0; i < userAddresses.length; i++) {
-        $("#allUnprocessedClaims").append(
-          `<p>User: ${userAddresses[i]} - Claim ID: ${claimIds[i]} - Claim Amount: ${claimAmount[i]} ETH</p>`
-        );
+      if (userAddresses.length === 0) {
+        $("#allUnprocessedClaims").append(`<p>No unprocessed claims found.</p>`);
+      } else {
+        for (let i = 0; i < userAddresses.length; i++) {
+          $("#allUnprocessedClaims").append(
+            `<p>User: ${userAddresses[i]} - Claim ID: ${claimIds[i]} - Claim Amount: ${claimAmount[i] / 1e18} ETH</p>`
+          );
+        }
       }
     } catch (err) {
       console.error(err.message);

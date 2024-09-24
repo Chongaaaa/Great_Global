@@ -33,7 +33,7 @@
 
       <!-- Add User Section -->
       <h3>Add User</h3>
-      <input type="text" id="userAddress" placeholder="User Address" />
+      <input type="text" id="addUserAddress" placeholder="User Address" />
       <button id="addUserBtn">Add User</button>
 
       <!-- Add Claim Section -->
@@ -44,7 +44,7 @@
       <!-- Process Claims Section -->
       <h3>Approve/Reject Claims</h3>
       <div id="claimsList">
-        <input type="text" id="userAddress" placeholder="User Address" />
+        <input type="text" id="approveUserAddress" placeholder="User Address" />
         <br /><br />
         <input type="text" id="claimId" placeholder="Claim ID" />
         <br /><br />
@@ -52,9 +52,22 @@
         <button id="rejectClaimBtn">Reject Claim</button>
       </div>
 
+      <!-- Unprocessed Claims for a User -->
+      <h3>View All Unprocessed Claims for a Single User</h3>
+      <input
+        type="text"
+        id="viewClaimsUserAddress"
+        placeholder="User Address"
+      />
+      <br /><br />
+      <button id="viewUnprocessedClaimsBtn">View Unprocessed Claims</button>
+      <div id="unprocessedClaims"></div>
+
       <!-- Unprocessed Claims for All Users -->
       <h3>View All Unprocessed Claims</h3>
-      <button id="viewUnprocessedClaimsBtn">View All Unprocessed Claims</button>
+      <button id="viewAllUnprocessedClaimsBtn">
+        View All Unprocessed Claims
+      </button>
       <div id="allUnprocessedClaims"></div>
 
       <!-- Send Funds Section (Debug) -->

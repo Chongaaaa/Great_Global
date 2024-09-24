@@ -21,7 +21,13 @@ contract ClaimProcessing {
         uint256 amount
     );
 
-    event Debug(string message, address user, uint256 claimId, uint256 amount);
+    event adminAdded();
+
+    event userAdded();
+
+    event userRemoved();
+
+    event claimAdded();
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can perform this action");
@@ -109,7 +115,6 @@ contract ClaimProcessing {
 
         uint256 amount = claims[user][claimId].amount;
 
-        emit Debug("Claim not processed", user, claimId, amount);
         if (claimValid) {
             (bool success, ) = user.call{value: amount}("");
             require(success, "Refund transfer failed.");
@@ -122,7 +127,7 @@ contract ClaimProcessing {
     // Function to get all unprocessed claims for a specific user
     function getUnprocessedClaims(
         address user
-    ) public view returns (uint256[] memory) {
+    ) public view returns (uint256[] memory, uint256[] memory) {
         uint256 unprocessedCount = 0;
         uint256 totalClaims = claimCount[user];
 
@@ -132,17 +137,19 @@ contract ClaimProcessing {
             }
         }
 
-        uint256[] memory unprocessedClaims = new uint256[](unprocessedCount);
+        uint256[] memory claimIds = new uint256[](unprocessedCount);
+        uint256[] memory claimAmount = new uint256[](unprocessedCount);
         uint256 index = 0;
 
         for (uint256 i = 0; i < totalClaims; i++) {
             if (!claims[user][i].isProcessed) {
-                unprocessedClaims[index] = i;
+                claimIds[index] = i;
+                claimAmount[index] = claims[user][i].amount;
                 index++;
             }
         }
 
-        return unprocessedClaims;
+        return (claimIds, claimAmount);
     }
 
     // Function to get all unprocessed claims for all users
