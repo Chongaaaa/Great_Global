@@ -158,7 +158,7 @@ contract paymentModule {
         );
     }
 
-    function dailyInsCheck() public {
+    function dailyInsCheck() external {
         for (uint256 i = 0; i < addedCustomer.length; i++) {
             address currCustomerAddress = addedCustomer[i];
             Customer storage currCustomer = customers[currCustomerAddress];
