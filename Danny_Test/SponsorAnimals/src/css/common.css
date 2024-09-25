@@ -89,17 +89,25 @@ header h1 {
     color: #2D3031;
 }
 
+header nav {
+    margin-left: 50%;
+}
+
 header nav ul li {
     position: relative;
     float: left;
+    padding: 0px 10px;
+    width: 150px;
+    text-align: center;
 }
 
 header nav ul li a {
     font-size: 2rem;
     letter-spacing: 1px;
-    padding: 18px;
+    padding: 12px;
     color: #2D3031;
     display: block;
+    border: #FFFFFF 2px solid;
 }
 
 /* dropdown menu */
@@ -122,14 +130,16 @@ header nav ul li ul li {
 }
 
 header nav ul li a.active {
-    background: #FD6574;
-    color: #FFFFFF;
+    border: #FD6574 2px solid;
+    color: #FD6574;
+    border-radius: 10px;
 }
 
 header nav ul li a:hover {
     transition: 0.3s;
     background: #FD6574;
     color: #FFFFFF;
+    border-radius: 10px;
 }
 
 header .login-link {
