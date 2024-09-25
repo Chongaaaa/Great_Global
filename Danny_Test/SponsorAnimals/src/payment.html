@@ -33,60 +33,69 @@
     <!-- add admin -->
     <label for="pAdminAddress">Admin Address: </label>
     <input type="text" id="pAdminAddress" placeholder="Enter admin address" />
-    <br />
+    <br>
     <button id="pAddAdminBtn">Add Admin</button>
 
-    <br /><br />
+    <br><br>
 
     <!-- update pay date -->
     <label for="payDateCustomerAddress">Customer Address: </label>
     <input type="text" id="payDateCustomerAddress" placeholder="Enter customer address" />
-    <br />
+    <br>
     <label for="payDateInsuranceID">Insurance Subscription ID: </label>
     <input type="text" id="payDateInsuranceID" placeholder="Enter insurance subscription ID" />
-    <br />
+    <br>
     <label for="newPayDate">New Pay Date (Timestamp): </label>
     <input type="text" id="newPayDate" placeholder="Enter new pay date" />
-    <br />
+    <br>
     <button id="updatePayDateBtn">Update Pay Date</button>
 
-    <br /><br />
+    <!-- Check Insurance Pay Date (Admin Only) -->
+    <div>
+      <h2>Check Insurance Pay Date (Admin)</h2>
+      <input type="text" id="payDateCustomerAddress" placeholder="Customer Address">
+      <input type="text" id="payDateSubscriptionID" placeholder="Insurance Subscription ID">
+      <button id="viewUpdatedPayDateBtn">Check Pay Date</button>
+      <p id="payDateResult"></p>
+    </div>
+
+    <br><br>
 
     <!-- Insurance Section -->
     <!-- approve insurance -->
     <h2>Insurance Section</h2>
     <label for="approveInsuranceCustomerAddress">Customer Address: </label>
     <input type="text" id="approveInsuranceCustomerAddress" placeholder="Enter customer address" />
-    <br />
+    <br>
     <label for="pInsuranceID">Insurance ID: </label>
     <input type="text" id="pInsuranceID" placeholder="Enter insurance ID" />
-    <br />
+    <br>
     <label for="pPayAmount">Pay Amount: </label>
     <input type="text" id="pPayAmount" placeholder="Enter pay amount" />
-    <br />
+    <br>
     <label for="pPayDate">Pay Date: </label>
     <input type="text" id="pPayDate" placeholder="Enter pay date (timestamp)" />
-    <br />
+    <br>
     <button id="approveInsuranceBtn">Approve Insurance</button>
 
-    <br /><br />
+    <br><br>
 
     <!-- Customer Section -->
     <h2>Customer Section</h2>
     <!-- register as customer -->
     <label for="pRegisterCustomer">Register as User: </label>
-    <br />
+    <br>
     <button id="registerCustomerBtn">Register User</button>
 
-    <br /><br />
+    <br><br>
 
     <!-- add balance -->
     <label for="addBalanceInput">Add Balance: </label>
     <input type="text" id="addBalanceInput" placeholder="Enter amount in ETH" />
-    <br />
+    <br>
     <button id="addBalanceBtn">Add Balance</button>
 
-    <br /><br />
+    <br><br>
 
     <!-- view balance -->
     <button id="getCustomerBalanceBtn">Check Balance</button>
@@ -97,10 +106,20 @@
     <!-- update auto pay status -->
     <label for="autoPayInsuranceID">Insurance Subscription ID: </label>
     <input type="text" id="autoPayInsuranceID" placeholder="Enter insurance subscription ID" />
-    <br />
+    <br>
     <button id="updateAutoPayBtn">Update AutoPay</button>
 
-    <br /><br />
+    <br><br>
+
+    <!-- Check Auto Payment Status -->
+    <div>
+      <h2>Check Auto Pay Status</h2>
+      <input type="text" id="autoPayInsuranceID" placeholder="Insurance Subscription ID">
+      <button id="viewAutoPayStatusBtn">Check Auto Pay Status</button>
+      <p id="autoPayResult"></p>
+    </div>
+
+    <br><br>
     <!-- Cancel Insurance -->
     <h2>Cancel Insurance Subscription</h2>
     <label for="cancelInsuranceID">Insurance Subscription ID: </label>
@@ -109,15 +128,36 @@
 
     <br><br>
 
+    <!-- Check Insurance Status -->
+    <div>
+      <h2>Check Insurance Status</h2>
+      <input type="text" id="cancelInsuranceID" placeholder="Insurance Subscription ID">
+      <button id="viewCancelInsuranceStatusBtn">Check Insurance Status</button>
+      <p id="cancelInsuranceStatusResult"></p>
+    </div>
+
+    <br><br>
+
     <!-- Payment Section -->
     <!-- manual pay -->
     <h2>Payment Section</h2>
     <label for="manualPayInsuranceID">Insurance Subscription ID: </label>
     <input type="text" id="manualPayInsuranceID" placeholder="Enter insurance subscription ID" />
-    <br />
+    <br>
     <button id="manualPayBtn">Manual Payment</button>
 
-    <br /><br />
+    <br><br>
+
+    <!-- Check manual payment -->
+    <div>
+      <h2>Check Manual Payment</h2>
+      <input type="text" id="manualPaySubscriptionID" placeholder="Insurance Subscription ID">
+      <button id="viewManualPaymentResultBtn">Check Manual Pay</button>
+      <p id="manualPayResult"></p>
+    </div>
+
+    <br><br>
+
   </main>
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
