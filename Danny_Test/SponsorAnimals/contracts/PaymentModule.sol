@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract paymentModule {
+contract PaymentModule {
     enum InsuranceStatus {
         Pending,
         Approved,
@@ -89,10 +89,15 @@ contract paymentModule {
     }
 
     modifier onlyCustomer() {
+        bool validCustomer = false;
         for (uint256 i; i < addedCustomer.length; i++) {
-            if (msg.sender != addedCustomer[i]) {
-                revert("Caller is not a customer.");
+            if (msg.sender == addedCustomer[i]) {
+                validCustomer = true;
             }
+        }
+
+        if(validCustomer == false){
+            revert("Caller is not a customer.");
         }
         _;
     }
@@ -241,10 +246,13 @@ contract paymentModule {
             );
             require(
                 customerBalances[msg.sender] >= currInsurance.payAmount,
-                "Insufficient payment."
+                "Insufficient balance."
             );
+
             makePayment(msg.sender, currInsurance, currInsurance.payAmount);
             emit StatusMessage("Manual payment completed successfully!");
+        }else{
+            revert("Insurance not exist.");
         }
     }
 
@@ -289,6 +297,8 @@ contract paymentModule {
                 _insuranceSubscriptionID,
                 currInsurance.autoPay
             );
+        }else{
+            revert("Insurance not exist.");
         }
     }
 
@@ -321,6 +331,8 @@ contract paymentModule {
                 _insuranceSubscriptionID,
                 currInsurance.payDate
             );
+        }else{
+            revert("Insurance not exist.");
         }
     }
 
@@ -343,6 +355,8 @@ contract paymentModule {
                 _insuranceSubscriptionID,
                 currInsurance.insStatus
             );
+        }else{
+            revert("Insurance not exist.");
         }
     }
 
@@ -352,17 +366,7 @@ contract paymentModule {
     ) private view returns (bool validity) {
         Customer storage currCustomer = customers[custAddress];
         for (uint256 i = 0; i < currCustomer.subscribedPackages.length; i++) {
-            require(
-                insuranceSubscribed[custAddress][
-                    currCustomer.subscribedPackages[i]
-                ].insuranceSubscriptionID == _insuranceSubscriptionID,
-                "Insurance not exist."
-            );
-            if (
-                insuranceSubscribed[custAddress][
-                    currCustomer.subscribedPackages[i]
-                ].insuranceSubscriptionID == _insuranceSubscriptionID
-            ) {
+            if (insuranceSubscribed[custAddress][currCustomer.subscribedPackages[i]].insuranceSubscriptionID == _insuranceSubscriptionID) {
                 return true;
             }
         }
