@@ -76,6 +76,7 @@ App = {
     $(document).on("click", "#registerBtn", App.handleRegister);
     $(document).on("click", "#signinBtn", App.handleSignin);
     $(document).on("click", "#resetpwBtn", App.handleReset);
+    $(document).on("click", "#signinAdminBtn", App.handleSignInAdmin);
     $(document).on("click", "#addAdminBtn", App.handleAddAdmin);
     $(document).on("click", "#removeAdminBtn", App.handleRemoveAdmin);
 
@@ -94,6 +95,35 @@ App = {
   },
 
   // Admin Management
+  handleSignInAdmin: async function (event) {
+    event.preventDefault();
+  
+    const adminAddress = $("#signinAdminAddress").val();
+
+    // Simple Validation Rules
+    if (!adminAddress || adminAddress.trim() === "") {
+      alert("Please enter your address.");
+      return;
+    }
+
+    const instance = await App.contracts.UserAuth.deployed();
+  
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+  
+      try {
+        await instance.adminSignIn(adminAddress,{from: account });
+        alert("Sign In successfully.");
+        // Redirect to AdminHomePage.html after successful sign-in
+        window.location.href = "AdminHomePage.html";
+      } catch (err) {
+        console.error(err.message);
+        alert("Invalid Address.");
+      }
+    });
+  },
+
   handleAddAdmin: async function (event) {
     event.preventDefault();
 
@@ -385,12 +415,18 @@ App = {
   handleSignin: async function (event) {
     event.preventDefault();
 
-    const identifier = $("#signinIdentifier").val(); // Can be email or name
+    const identifier = $("#signinIdentifier").val(); 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const password = $("#signinPassword").val();
 
     // Validate the identifier (basic check)
     if (!identifier || identifier.trim() === "") {
-      alert("Please enter your name or email.");
+      alert("Please enter your email.");
+      return;
+    }
+    // Basic email validation pattern
+    if (!emailPattern.test(identifier)) {
+      alert("Please enter a valid email address. (e.g., example@domain.com)");
       return;
     }
 
@@ -410,7 +446,7 @@ App = {
         alert("Sign In successfully!");
       } catch (err) {
         console.error(err.message);
-        alert("Invalid Name or Password.");
+        alert("Invalid Email or Password.");
       }
     });
   },
@@ -418,12 +454,18 @@ App = {
   handleReset: async function (event) {
     event.preventDefault();
 
-    const identifier = $("#resetIdentifier").val(); // Can be email or address
+    const identifier = $("#resetIdentifier").val(); 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newPassword = $("#newPassword").val();
 
     // Validate the identifier (basic check)
     if (!identifier || identifier.trim() === "") {
-      alert("Please enter your name or email.");
+      alert("Please enter your email.");
+      return;
+    }
+    // Basic email validation pattern
+    if (!emailPattern.test(identifier)) {
+      alert("Please enter a valid email address. (e.g., example@domain.com)");
       return;
     }
 

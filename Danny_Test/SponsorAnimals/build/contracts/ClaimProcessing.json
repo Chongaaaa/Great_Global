@@ -16918,12 +16918,13 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xcE24d3afbE192B70B60BfF52de59DeD093316010",
-      "transactionHash": "0xc2657f02ad58295645366c0a2ebe8882186509cb9f5dbe383305a9f33aca199f"
+      "address": "0x847aeb734Ae6B996D45632C174eDe9A8f3Bde3d2",
+      "transactionHash": "0x5bf264da0dcf0dbc3c454d6c2bd0dcce86bf10dd474e88cc16fa5b67f3cb7e5c"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-09-25T10:49:41.965Z",
+  "updatedAt": "2024-09-25T10:14:00.669Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},
