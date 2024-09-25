@@ -1,0 +1,350 @@
+input.color-template {
+    color: #2D3031;
+    color: #6C757D;
+    color: #D6DADB;
+    color: #FFB54D;
+    color: #FFC371;
+    color: #FFCA80;
+    color: #EBE7DB;
+    color: #F2F2F2;
+    color: #FFFFFF;
+    color: #0087CA;
+    color: #0099E6;
+}
+
+/* all account pages */
+main {
+    padding: 30px;
+    background-color: #EBE7DB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    height: auto;
+    width: 100%;
+    min-width: 700px;
+    max-width: 1000px;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.content {
+    width: 700px;
+    animation: fade 0.3s ease-in;
+}
+
+.content-view {
+    width: 100%;
+    padding: 40px;
+}
+
+.content-view h1 {
+    font-size: 4rem;
+}
+
+/* side menu */
+.menu {
+    width: 30%;
+    min-width: 300px;
+    border-right: 2px solid #EBE7DB;
+}
+
+.personal-details {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.personal-details img {
+    height: 150px;
+    width: 150px;
+    border-radius: 100px;
+}
+
+.personal-details h2 {
+    margin-top: 10px;
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-align: center;
+    color: #2D3031;
+}
+
+.personal-details h3 {
+    margin-top: 5px;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #6C757D;
+}
+
+.nav-menu {
+    width: 100%;
+}
+
+.nav-menu a {
+    padding: 10px 30px;
+    color: #2D3031;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    height: 60px;
+    border-top: 2px solid #EBE7DB;
+}
+
+.nav-menu a.active {
+    color: #FFFFFF;
+    background-color: #FFC371;
+}
+
+.nav-menu a:hover {
+    color: #FFFFFF;
+    background-color: #FFCA80;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.nav-menu a.logout:hover {
+    border-bottom-left-radius: 8px;
+}
+
+/* profile and security page css */
+.content-view .table {
+    margin-top: 10px;
+    padding-right: 80px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-view .table .row {
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-view .table .row .col {
+    flex-grow: 1;
+}
+
+.content-view .table .row .col h3 {
+    font-size: 1.4rem;
+}
+
+/* input fields */
+.content-view .table .row .col input {
+    margin-top: 5px;
+    padding: 10px 15px;
+    width: 100%;
+    max-width: 230px;
+    border: 1px solid #D6DADB;
+    border-radius: 4px;
+    outline: none;
+}
+
+.content-view .table .row .col input:focus {
+    border: 1px solid #6C757D
+}
+
+/* checkbox */
+.content-view .checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    margin-top: 20px;
+}
+
+.content-view .checkbox input {
+    margin: 0 10px 0 5px;
+}
+
+.content-view .checkbox label {
+    color: #6C757D;
+    font-size: 1.0rem;
+}
+
+/* buttons  */
+.buttons input {
+    cursor: pointer;
+    margin: 30px 20px 0 0;
+    padding: 12px;
+    min-width: 100px;
+    border-radius: 8px;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.buttons input.update {
+    background: #FFC371;
+    color: #FFFFFF;
+    border: none;
+}
+
+.buttons input.update:hover {
+    background: #FFCA80;
+    transition: 0.3s;
+}
+
+.buttons input.cancel,
+.add {
+    background: #FFFFFF;
+    color: #2D3031;
+    border: 1px solid #D6DADB;
+}
+
+.buttons input.cancel a {
+    color: #2D3031;
+}
+
+.buttons input.cancel:hover,
+.add:hover {
+    background: #EBE7DB;
+    transition: 0.3s;
+}
+
+/* application page css */
+.schedule table {
+    margin-top: 30px;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.01);
+    width: 100%;
+}
+
+.schedule table caption {
+    text-align: start;
+    padding-left: 1rem;
+    background: #c9be9c;
+    font-size: 1.6rem;
+}
+
+.schedule table th {
+    background: #EBE7DB;
+    font-size: 1.6rem;
+}
+
+.schedule table td {
+    font-size: 1.3rem;
+}
+
+.schedule table th,
+td,
+caption {
+    border: rgba(0, 0, 0, 0.1) 1px solid;
+    height: 30px;
+    text-align: center;
+    padding: 0.5rem
+}
+
+.schedule table tr td.remove:hover {
+    transition: 0.3s;
+    color: #FFC371;
+    cursor: pointer;
+}
+
+.application {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* back and next page buttons */
+.application .page {
+    display: flex;
+    justify-content: space-between;
+}
+
+.application .page button {
+    margin-right: 0;
+    margin-left: 20px;
+}
+
+/* rewards page css */
+.content-view .points {
+    display: flex;
+    align-items: end;
+}
+
+.content-view .points .current-points {
+    height: fit-content;
+    margin-left: 3rem;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    font-size: 2rem;
+    letter-spacing: 1px;
+    background-color: #FFC371;
+    color: #FFFFFF;
+}
+
+.content-view .reward-table .row {
+    margin-top: 25px;
+    display: flex;
+    height: 185px;
+}
+
+.content-view .reward-table .row .col {
+    position: relative;
+    overflow: hidden;
+    border: rgba(0, 0, 0, 0.2) solid 1px;
+    border-radius: 2px;
+    padding: 8px;
+    margin-right: 15px;
+    width: 140px;
+    height: 100%;
+}
+
+.content-view .reward-table .row .col .item-img {
+    position: relative;
+    height: 80%;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.content-view .reward-table .row .col .item-img img {
+    position: absolute;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.content-view .reward-table .row .col h3,
+h2 {
+    text-align: center;
+}
+
+.content-view .reward-table .row .col h3 {
+    color: #2D3031;
+}
+
+.content-view .reward-table .row .col h2 {
+    font-size: 1.3rem;
+    font-weight: 200;
+    color: #6C757D;
+}
+
+.layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.layer:hover {
+    transition: 0.3s;
+    background-color: rgb(255, 196, 113, 0.1);
+}
