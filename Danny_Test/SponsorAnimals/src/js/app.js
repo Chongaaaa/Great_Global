@@ -82,12 +82,14 @@ App = {
 
     // Payment Module
     $(document).on("click", "#pAddAdminBtn", App.handlePAddAdmin);
-    $(document).on("click", "#registerCustomerBtn", App.handlePRegisterCustomer);
-    $(document).on("click", "#approveInsuranceBtn", App.handlePApproveInsurance);
-    $(document).on("click", "#manualPayBtn", App.handleManualPayment);
-    $(document).on("click", "#addBalanceBtn", App.handleAddBalance);
-    $(document).on("click", "#updateAutoPayBtn", App.handleUpdateAutoPay);
     $(document).on("click", "#updatePayDateBtn", App.handleUpdatePayDate);
+    $(document).on("click", "#approveInsuranceBtn", App.handlePApproveInsurance);
+    $(document).on("click", "#registerCustomerBtn", App.handlePRegisterCustomer);
+    $(document).on("click", "#addBalanceBtn", App.handleAddBalance);
+    $(document).on("click", "#getCustomerBalanceBtn", App.handleGetCustomerBalance);
+    $(document).on("click", "#updateAutoPayBtn", App.handleUpdateAutoPay);
+    $(document).on("click", "#cancelInsuranceBtn", App.handleCancelInsurance);
+    $(document).on("click", "#manualPayBtn", App.handleManualPayment);
   },
 
   // Admin Management
@@ -504,103 +506,8 @@ App = {
 
       try {
         await instance.addAdmin(adminAddress, { from: account });
+        console.log(account);
         alert("Admin added successfully.");
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
-  handlePRegisterCustomer: async function (event) {
-    event.preventDefault();
-
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        await instance.registerCustomer({ from: account });
-        alert("Customer registered successfully.");
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
-  handlePApproveInsurance: async function (event) {
-    event.preventDefault();
-
-    const insuranceID = $("#pIinsuranceID").val();
-    const payAmount = $("#pPayAmount").val();
-    const payDate = $("#pPayDate").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        await instance.approveInsurance(account, insuranceID, payAmount, payDate, { from: account });
-        alert("Insurance approved successfully.");
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
-  handleManualPayment: async function (event) {
-    event.preventDefault();
-
-    const insuranceSubscriptionID = $("#manualPayInsuranceID").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        await instance.manualPay(insuranceSubscriptionID, { from: account, value: $("#payAmountInput").val() * 1e18 });
-        alert("Manual payment completed successfully.");
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
-  handleAddBalance: async function (event) {
-    event.preventDefault();
-
-    const amount = $("#addBalanceInput").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        await instance.addBalance({ from: account, value: amount * 1e18 });
-        alert("Balance added successfully.");
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
-  handleUpdateAutoPay: async function (event) {
-    event.preventDefault();
-
-    const insuranceSubscriptionID = $("#autoPayInsuranceID").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        await instance.updateAutoPay(insuranceSubscriptionID, { from: account });
-        alert("AutoPay status updated successfully.");
       } catch (err) {
         console.error(err.message);
       }
@@ -626,7 +533,144 @@ App = {
         console.error(err.message);
       }
     });
+  },
+
+  handlePApproveInsurance: async function (event) {
+    event.preventDefault();
+
+    const customerAddress = $("#approveInsuranceCustomerAddress").val();
+    const insuranceID = $("#pInsuranceID").val();
+    const payAmount = Math.max(0, parseInt($("#pPayAmount").val(), 10));
+    const payDate = Math.floor(new Date($("#pPayDate").val()).getTime() / 1000); // Convert to seconds
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        // Call with correct arguments
+        await instance.approveInsurance(customerAddress, insuranceID, payAmount, payDate, { from: account });
+        alert("Insurance approved successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handlePRegisterCustomer: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.registerCustomer({ from: account });
+        alert("Customer registered successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleAddBalance: async function (event) {
+    event.preventDefault();
+
+    const amount = $("#addBalanceInput").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.addBalance({ from: account, value: amount });
+        alert("Balance added successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleGetCustomerBalance: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const balance = await instance.getCustomerBalance({ from: account });
+        const displayBalance = balance && balance.toString() !== "0" ? balance.toString() : "0";
+        $("#customerBalanceDisplay").text(`Your balance is: ${displayBalance} ETH`);
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleUpdateAutoPay: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#autoPayInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.updateAutoPay(insuranceSubscriptionID, { from: account });
+        alert("AutoPay status updated successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleCancelInsurance: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#cancelInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.cancelInsurance(insuranceSubscriptionID, { from: account });
+        alert("Insurance subscription cancelled successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleManualPayment: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#manualPayInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.manualPay(insuranceSubscriptionID, { from: account, value: $("#payAmountInput").val() * 1e18 });
+        alert("Manual payment completed successfully.");
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
   }
+  
 };
 
 $(function () {
