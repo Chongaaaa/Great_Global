@@ -5,6 +5,7 @@ contract UserAuth {
     struct User {
         string name;
         string email;
+        address refundAddress;
         uint age;
         bytes32 hashedPassword;
         bool isRegistered;
@@ -70,7 +71,8 @@ contract UserAuth {
         string memory _name,
         string memory _email,
         uint _age,
-        string memory _password
+        string memory _password,
+        address _refundAddress
     ) public {
         bool validEmail = true;
         for (uint i = 0; i < registeredUserEmails.length; i++) {
@@ -88,6 +90,7 @@ contract UserAuth {
             name: _name,
             email: _email,
             age: _age,
+            refundAddress: _refundAddress,
             hashedPassword: hashedPassword,
             isRegistered: true,
             subscribedPackages: new uint256[](100)
@@ -199,4 +202,14 @@ contract UserAuth {
         require(users[currentUser].isRegistered, "User not registered");
         return users[currentUser].age;
     }
+
+    function getCurrentUser() public view returns (string memory) {
+        return (currentUser);
+    }
+
+    function getCurrentAdmin() public view returns (address) {
+        return (currentAdmin);
+    }
+
+    // LOGOUT
 }
