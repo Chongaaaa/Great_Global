@@ -523,7 +523,7 @@ App = {
       const account = accounts[0];
 
       try {
-        const money = await instance.withdrawMoney(amount, { from: account });
+        const money = await instance.withdrawMoney(amount * 1e18, { from: account });
         alert(`Successfully withdrew ${money} ETH.`);
       } catch (err) {
         console.error(err.message);
@@ -625,7 +625,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.addBalance({ from: account, value: amount });
+        await instance.addBalance({ from: account, value: amount * 1e18});
         alert("Balance added successfully.");
       } catch (err) {
         console.error(err.message);
