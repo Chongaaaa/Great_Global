@@ -191,5 +191,13 @@ contract UserAuth {
         return users[currentUser].age;
     }
 
+    function getCurrentUser() public view returns (string memory) {
+        return (currentUser);
+    }
+
+    function getCurrentAdmin() public view returns (address) {
+        return (currentAdmin);
+    }
+
     // LOGOUT
 }
