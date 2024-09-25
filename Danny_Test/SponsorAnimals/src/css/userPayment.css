@@ -1,0 +1,65 @@
+#payNow {
+    background-color: #6C8A9B;
+    height: 20vw;
+    width: 80vw;
+    padding: 2% 5%;
+    margin: 5% auto;
+    border-radius: 20px;
+}
+
+#word{
+    display: flex;
+    float: inline-start;
+    text-align: center;
+    width: 30%;
+    height: 90%;
+    margin: 1% 0% 2%;
+    font-weight: bold;
+}
+
+#word h2 {
+    font-size: 3vw;
+    color: #F9F5EF;
+    border: #F9F5EF 3px solid;
+    padding: 4%;
+}
+
+#input{
+    display: inline-block;
+    width: 70%;
+    height: 90%;
+    margin: 2% 0%;
+    padding: 2% 10%;
+}
+
+#input label {
+    font-size: 2vw;
+    color: #F9F5EF;
+}
+
+#input input {
+    height: 30%;
+    width: 100%;
+    padding: 2px 2px 2px 8px;
+    margin: 2% 0% 5%;
+    border-radius: 10px;
+    font-size: 1.2vw;
+    border: none;
+}
+
+#input button {
+    height: 20%;
+    width: 20%;
+    border-radius: 5px;
+    font-size: 1vw;
+}
+
+#input button:hover{
+    transition: 0.3s;
+    background-color: #FD6574;
+}
+
+#nextPayDateDisplay {
+    background-color: #fff;
+    width: 20%;
+}
