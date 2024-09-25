@@ -13,7 +13,6 @@ contract UserAuth {
 
     mapping(address => User) public users;
     mapping(string => address) private emailToAddress;
-    mapping(string => address) private nameToAddress;
 
     address[] public registeredUsers; // External array to store all registered users' addresses
     address[] public adminAddresses; // Array to store all admin addresses
@@ -81,14 +80,20 @@ contract UserAuth {
             subscribedPackages: new uint256[](100)
         });
 
-        // Map email and name to address for easy lookup
+        // Map email to address for easy lookup
         emailToAddress[_email] = msg.sender;
-        nameToAddress[_name] = msg.sender;
 
         // Add the user address to the external registeredUsers array
         registeredUsers.push(msg.sender);
 
         emit UserRegistered(msg.sender, _name, _email, _age);
+    }
+
+    // Admin sign in using just the address
+    function adminSignIn(address _adminAddress) public view returns (bool) {
+        require(admins[_adminAddress], "This address is not an admin."); // Check if the address is an admin
+
+        return true; // Admin sign-in successful
     }
 
     // Admin function to assign a new admin
@@ -125,9 +130,6 @@ contract UserAuth {
         string memory _password
     ) public view returns (bool) {
         address userAddress = emailToAddress[_identifier];
-        if (userAddress == address(0)) {
-            userAddress = nameToAddress[_identifier];
-        }
 
         User memory user = users[userAddress];
         require(user.isRegistered, "User not registered.");
@@ -145,12 +147,10 @@ contract UserAuth {
     ) public {
         require(users[msg.sender].isRegistered, "User not registered.");
 
-        bool isValid = (keccak256(abi.encodePacked(users[msg.sender].name)) ==
-            keccak256(abi.encodePacked(_identifier)) ||
-            keccak256(abi.encodePacked(users[msg.sender].email)) ==
-            keccak256(abi.encodePacked(_identifier)));
+        bool isValid = keccak256(abi.encodePacked(users[msg.sender].email)) ==
+            keccak256(abi.encodePacked(_identifier));
 
-        require(isValid, "Invalid name or email.");
+        require(isValid, "Invalid email.");
 
         bytes32 newHashedPassword = keccak256(abi.encodePacked(_newPassword));
         bytes32 oldHashedPassword = users[msg.sender].hashedPassword;
@@ -168,5 +168,10 @@ contract UserAuth {
     // Function to get all registered user addresses
     function getAllRegisteredUsers() public view returns (address[] memory) {
         return registeredUsers;
+    }
+
+    // Function to get all registered user addresses
+    function getAllAdmins() public view returns (address[] memory) {
+        return adminAddresses;
     }
 }
