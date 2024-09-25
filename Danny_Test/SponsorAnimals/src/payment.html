@@ -1,35 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <title>Insurance Payment Module</title>
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/payment.css">
+  <title>Insurance Payment Module</title>
+</head>
+
+<body>
+  <header>
+    <a href="/html/index.html">
+      <img src="images/GG_Logo.jpg" alt="fitzone logo" style="margin-top: 3.5%;">
+      <h1>Great Global</h1>
+    </a>
+
+    <nav>
+      <ul>
+        <li><a href="/html/index.html">Home</a></li>
+        <li><a href="/html/about.html">About</a></li>
+        <li><a href="/html/news.html">News</a></li>
+        <li><a href="/html/facilities/facilities.html">Facilities +</a>
+          <ul>
+            <li><a href="/html/facilities/gym.html">Gym Area</a></li>
+            <li><a href="/html/facilities/cafe.html">Energy Cafe</a></li>
+            <li><a href="/html/facilities/yoga.html">Yoga Room</a></li>
+            <li><a href="/html/facilities/sauna.html">Sauna Room</a></li>
+          </ul>
+        </li>
+        <li><a href="/html/lessons/lessons.html">Lessons +</a>
+          <ul>
+            <li><a href="/html/lessons/membership.html">Memberships</a></li>
+            <li><a href="/html/lessons/schedules.html">Schedules</a></li>
+            <li><a href="/html/lessons/instructors.html">Instructors</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="active">Merchandise</a></li>
+        <li><a href="/html/help.html">Help</a></li>
+
+      </ul>
+    </nav>
+
+    <a href="/html/account/profile.html" class="login-link">
+      <img src="/icons/circle-user-solid.png" alt="profile logo">
+    </a>
+  </header>
+
+  <main>
     <h1>Insurance Payment Module</h1>
 
     <!-- Admin Section -->
     <h2>Admin Section</h2>
+    <!-- add admin -->
     <label for="pAdminAddress">Admin Address: </label>
     <input type="text" id="pAdminAddress" placeholder="Enter admin address" />
     <br />
     <button id="pAddAdminBtn">Add Admin</button>
 
     <br /><br />
+
+    <!-- update pay date -->
     <label for="payDateCustomerAddress">Customer Address: </label>
-    <input
-      type="text"
-      id="payDateCustomerAddress"
-      placeholder="Enter customer address"
-    />
+    <input type="text" id="payDateCustomerAddress" placeholder="Enter customer address" />
     <br />
     <label for="payDateInsuranceID">Insurance Subscription ID: </label>
-    <input
-      type="text"
-      id="payDateInsuranceID"
-      placeholder="Enter insurance subscription ID"
-    />
+    <input type="text" id="payDateInsuranceID" placeholder="Enter insurance subscription ID" />
     <br />
     <label for="newPayDate">New Pay Date (Timestamp): </label>
     <input type="text" id="newPayDate" placeholder="Enter new pay date" />
@@ -38,32 +75,12 @@
 
     <br /><br />
 
-    <!-- Customer Section -->
-    <h2>Customer Section</h2>
-    <label for="pRegisterCustomer">Register as User: </label>
-    <br />
-    <button id="registerCustomerBtn">Register User</button>
-
-    <br /><br />
-    <label for="addBalanceInput">Add Balance: </label>
-    <input type="text" id="addBalanceInput" placeholder="Enter amount in ETH" />
-    <br />
-    <button id="addBalanceBtn">Add Balance</button>
-
-    <br /><br />
-    <label for="autoPayInsuranceID">Insurance Subscription ID: </label>
-    <input
-      type="text"
-      id="autoPayInsuranceID"
-      placeholder="Enter insurance subscription ID"
-    />
-    <br />
-    <button id="updateAutoPayBtn">Update AutoPay</button>
-
-    <br /><br />
-
     <!-- Insurance Section -->
+    <!-- approve insurance -->
     <h2>Insurance Section</h2>
+    <label for="approveInsuranceCustomerAddress">Customer Address: </label>
+    <input type="text" id="approveInsuranceCustomerAddress" placeholder="Enter customer address" />
+    <br />
     <label for="pInsuranceID">Insurance ID: </label>
     <input type="text" id="pInsuranceID" placeholder="Enter insurance ID" />
     <br />
@@ -77,28 +94,73 @@
 
     <br /><br />
 
+    <!-- Customer Section -->
+    <h2>Customer Section</h2>
+    <!-- register as customer -->
+    <label for="pRegisterCustomer">Register as User: </label>
+    <br />
+    <button id="registerCustomerBtn">Register User</button>
+
+    <br /><br />
+
+    <!-- add balance -->
+    <label for="addBalanceInput">Add Balance: </label>
+    <input type="text" id="addBalanceInput" placeholder="Enter amount in ETH" />
+    <br />
+    <button id="addBalanceBtn">Add Balance</button>
+
+    <br /><br />
+
+    <!-- view balance -->
+    <button id="getCustomerBalanceBtn">Check Balance</button>
+    <p id="customerBalanceDisplay"></p>
+
+    <br><br>
+
+    <!-- update auto pay status -->
+    <label for="autoPayInsuranceID">Insurance Subscription ID: </label>
+    <input type="text" id="autoPayInsuranceID" placeholder="Enter insurance subscription ID" />
+    <br />
+    <button id="updateAutoPayBtn">Update AutoPay</button>
+
+    <br /><br />
+    <!-- Cancel Insurance -->
+    <h2>Cancel Insurance Subscription</h2>
+    <label for="cancelInsuranceID">Insurance Subscription ID: </label>
+    <input type="text" id="cancelInsuranceID" placeholder="Enter insurance subscription ID">
+    <button id="cancelInsuranceBtn">Cancel Insurance</button>
+
+    <br><br>
+
     <!-- Payment Section -->
+    <!-- manual pay -->
     <h2>Payment Section</h2>
     <label for="manualPayInsuranceID">Insurance Subscription ID: </label>
-    <input
-      type="text"
-      id="manualPayInsuranceID"
-      placeholder="Enter insurance subscription ID"
-    />
-    <br />
-    <label for="payAmountInput">Pay Amount: </label>
-    <input type="text" id="payAmountInput" placeholder="Enter payment amount" />
+    <input type="text" id="manualPayInsuranceID" placeholder="Enter insurance subscription ID" />
     <br />
     <button id="manualPayBtn">Manual Payment</button>
 
     <br /><br />
+  </main>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/web3.min.js"></script>
-    <script src="js/truffle-contract.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+  <footer>
+    <ul>
+      <li><a href="https://www.twitter.com/" target="_blank"><img src="/icons/twitter.png" alt=""></a></li>
+      <li><a href="https://www.facebook.com/" target="_blank"><img src="/icons/facebook.png" alt=""></a></li>
+      <li><a href="https://www.instagram.com/" target="_blank"><img src="/icons/instagram.png" alt=""></a></li>
+      <li><a href="https://www.pinterest.com/" target="_blank"><img src="/icons/pinterest.png" alt=""></a></li>
+      <li><a href="https://www.youtube.com/" target="_blank"><img src="/icons/youtube.png" alt=""></a></li>
+    </ul>
+    <p>© 2024 Great Global All rights reserved.</p>
+  </footer>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/web3.min.js"></script>
+  <script src="js/truffle-contract.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
 </html>

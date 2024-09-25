@@ -75,7 +75,7 @@ contract PaymentModule {
     }
 
     // Modifier
-    modifier onlyManager() {
+    modifier onlyOwner() {
         require(msg.sender == manager, "Caller is not the manager.");
         _;
     }
@@ -103,7 +103,7 @@ contract PaymentModule {
     }
 
     // Add Admin
-    function addAdmin(address adminAddress) external onlyManager {
+    function addAdmin(address adminAddress) external onlyOwner {
         admins[adminAddress] = true;
         emit AdminAdded(adminAddress, true);
     }
@@ -371,5 +371,16 @@ contract PaymentModule {
             }
         }
         return false;
+    }
+
+    // Withdraw Ether from the contract
+    function withdrawMoney(uint256 amount) public onlyOwner {
+        require(amount <= address(this).balance, "Insufficient balance to withdraw");
+        payable(msg.sender).transfer(amount);
+    }
+
+    // View the total Ether balance in the contract
+    function viewTotalMoney() public view onlyOwner returns (uint256) {
+        return address(this).balance;
     }
 }
