@@ -51,6 +51,12 @@ App = {
       App.contracts.PaymentModule.setProvider(App.web3Provider);
     });
 
+    $.getJSON("AdminInsurancePolicy.json", function (data) {
+      var AdminInsurancePolicyArtifact = data;
+      App.contracts.AdminInsurancePolicy = TruffleContract(AdminInsurancePolicyArtifact);
+      App.contracts.AdminInsurancePolicy.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 
@@ -71,7 +77,6 @@ App = {
       App.handleViewAllUnprocessedClaims
     );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
-    $(document).on("click", "#viewFundsBtn", App.handleViewFunds);
 
     // User Module
     $(document).on("click", "#registerBtn", App.handleRegister);
@@ -86,17 +91,19 @@ App = {
     $(document).on("click", "#withdrawMoneyBtn", App.handleWithdrawMoney);
     $(document).on("click", "#pAddAdminBtn", App.handlePAddAdmin);
     $(document).on("click", "#updatePayDateBtn", App.handleUpdatePayDate);
-    $(document).on("click", "#viewUpdatedPayDateBtn", App.handleViewUpdatePayDate);
     $(document).on("click", "#approveInsuranceBtn", App.handlePApproveInsurance);
     $(document).on("click", "#registerCustomerBtn", App.handlePRegisterCustomer);
     $(document).on("click", "#addBalanceBtn", App.handleAddBalance);
     $(document).on("click", "#getCustomerBalanceBtn", App.handleGetCustomerBalance);
     $(document).on("click", "#updateAutoPayBtn", App.handleUpdateAutoPay);
-    $(document).on("click", "#viewAutoPayStatusBtn", App.handleViewUpdateAutoPay);
     $(document).on("click", "#cancelInsuranceBtn", App.handleCancelInsurance);
-    $(document).on("click", "#viewCancelInsuranceStatusBtn", App.handleViewCancelInsuranceStatus);
     $(document).on("click", "#manualPayBtn", App.handleManualPayment);
-    $(document).on("click", "#viewManualPaymentResultBtn", App.viewManualPaymentResultBtn);
+
+    // Policy
+    $(document).on("click", "#CreatePolicyBtn", App.handleCreatePolicy);
+    $(document).on("click", "#UpdatePolicyBtn", App.handleUpdatePolicy);
+    $(document).on("click", "#ArchievePolicyBtn", App.handleViewArchivedPolicy);
+    $(document).on("click", "#ViewPolicyBtn", App.handleViewPolicy);
   },
 
   // Admin Management
@@ -354,26 +361,6 @@ App = {
     });
   },
 
-  handleViewFunds: async function (event) {
-    event.preventDefault();
-
-    const instance = await App.contracts.ClaimProcessing.deployed();
-
-    try {
-      console.log(Web3.version);
-      const fundAmount = await instance.getBalance({
-        from: web3.eth.accounts[0],
-      });
-
-      // Clear the div before adding new content
-      console.log(fundAmount);
-      $("#contractBalance").html(fundAmount / 1e18 + " ETH");
-
-    } catch (err) {
-      console.error(err.message);
-    }
-  },
-
   // User Module
 
   handleRegister: async function (event) {
@@ -470,7 +457,7 @@ App = {
       try {
         await instance.signIn(identifier, password, { from: account });
         alert("Sign In successfully!");
-
+        
       } catch (err) {
         console.error(err.message);
         alert("Invalid Email or Password.");
@@ -600,27 +587,6 @@ App = {
     });
   },
 
-  handleViewUpdatePayDate: async function (event) {
-    event.preventDefault();
-
-    const customerAddress = $("#payDateCustomerAddress").val();
-    const insuranceSubscriptionID = $("#payDateSubscriptionID").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        const newPayDate = await instance.chkInsurancePayDate(customerAddress, insuranceSubscriptionID, { from: account });
-        const payDateFormatted = new Date(newPayDate * 1000).toLocaleString();
-        $("#payDateResult").text(`Insurance pay date: ${payDateFormatted} `);
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
   handlePApproveInsurance: async function (event) {
     event.preventDefault();
 
@@ -723,25 +689,6 @@ App = {
     });
   },
 
-  handleViewUpdateAutoPay: async function (event) {
-    event.preventDefault();
-
-    const insuranceSubscriptionID = $("#autoPayInsuranceID").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        const payStatus = await instance.chkAutoPayStatus(insuranceSubscriptionID, { from: account });
-        $("#autoPayResult").text(`Current insurance auto pay status: ${payStatus} `);
-      } catch (err) {
-        console.error(err.message);
-      }
-    });
-  },
-
   handleCancelInsurance: async function (event) {
     event.preventDefault();
 
@@ -758,25 +705,6 @@ App = {
       } catch (err) {
         console.error(err.message);
         alert("Failed to cancel insurance");
-      }
-    });
-  },
-
-  handleViewCancelInsuranceStatus: async function (event) {
-    event.preventDefault();
-
-    const insuranceSubscriptionID = $("#cancelInsuranceID").val();
-    const instance = await App.contracts.PaymentModule.deployed();
-
-    web3.eth.getAccounts(async function (error, accounts) {
-      if (error) console.error(error);
-      const account = accounts[0];
-
-      try {
-        const insStatus = await instance.chkCancelInsuranceStatus(insuranceSubscriptionID, { from: account });
-        $("#cancelInsuranceStatusResult").text(`Current insurance status: ${insStatus} `);
-      } catch (err) {
-        console.error(err.message);
       }
     });
   },
@@ -809,30 +737,223 @@ App = {
       }
     });
   },
-
-  viewManualPaymentResultBtn: async function (event) {
+  
+  //Policy
+  handleCreatePolicy: async function (event) {
     event.preventDefault();
 
-    const insuranceSubscriptionID = $("#manualPaySubscriptionID").val();
-    const instance = await App.contracts.PaymentModule.deployed();
+    const policyName = $("#policyName").val();
+    const premium = $("#premium").val();
+    const amount = $("#coverageAmount").val();
+    const agelimit = $("#ageLimit").val();
+    const active = $("#isActive").val() === "true";
+
+    // Simple Validation Rules
+    if (!policyName || policyName.trim() === "") {
+      alert("Please enter the policy name.");
+      return;
+    }
+
+    if (!premium || premium.trim() === "") {
+      alert("Please enter the premium");
+      return;
+    }
+
+    if (premium < 0 ) {
+      alert("Premium must be greater than 0");
+      return;
+    }
+
+    if (!amount || amount.trim() === "") {
+      alert("Please enter the coverage amount.");
+      return;
+    }
+
+    if (amount < 0) {
+      alert("Coverage amount must be greater than 0");
+      return;
+    }
+
+    if (!agelimit || isNaN(agelimit)) {
+      alert("Please enter a valid age limit.");
+      return;
+    }
+    if (agelimit < 0) {
+      alert("Age limit must be positive.");
+      return;
+    }
+
+    const instance = await App.contracts.AdminInsurancePolicy.deployed();
 
     web3.eth.getAccounts(async function (error, accounts) {
-        if (error) console.error(error);
-        const account = accounts[0];
+      if (error) console.log(error);
+      const account = accounts[0];
 
-        try {
-            const [payAmt, payDate] = await instance.chkManualPayInsurance(insuranceSubscriptionID, { from: account });
-            
-            // Convert the pay date timestamp to a human-readable date
-            const payDateFormatted = new Date(payDate * 1000).toLocaleString(); // Adjust as necessary for your locale
-
-            $("#manualPayResult").text(`Next payment: pay ${web3.utils.fromWei(payAmt.toString(), "ether")} ETH on ${payDateFormatted}`);
-        } catch (err) {
-            console.error(err.message);
-        }
+      try {
+        await instance.createPolicy(policyName,premium,amount,agelimit,active, { from: account });
+        alert("Create policy successfully!");
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to create policy.");
+      }
     });
-}
+  },
 
+  handleUpdatePolicy: async function (event) {
+    event.preventDefault();
+    const policyId = $("#updatePolicyId").val();
+    const policyName = $("#updatePolicyName").val();
+    const premium = $("#updatePremium").val();
+    const amount = $("#updateCoverageAmount").val();
+    const agelimit = $("#updateAgeLimit").val();
+    const active = $("#updateIsActive").val() === "true";
+
+    // Simple Validation Rules
+    if (!policyId || policyId.trim() === "") {
+      alert("Please enter your policy id.");
+      return;
+    }
+    if (!policyName || policyName.trim() === "") {
+      alert("Please enter the policy name.");
+      return;
+    }
+
+    if (!premium || premium.trim() === "") {
+      alert("Please enter the premium");
+      return;
+    }
+
+    if (premium < 0 ) {
+      alert("Premium must be greater than 0");
+      return;
+    }
+
+    if (!amount || amount.trim() === "") {
+      alert("Please enter the coverage amount.");
+      return;
+    }
+
+    if (amount < 0) {
+      alert("Coverage amount must be greater than 0");
+      return;
+    }
+
+    if (!agelimit || isNaN(agelimit)) {
+      alert("Please enter a valid age limit.");
+      return;
+    }
+    if (agelimit < 0) {
+      alert("Age limit must be positive.");
+      return;
+    }
+
+    const instance = await App.contracts.AdminInsurancePolicy.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+
+      try {
+        await instance.updatePolicy(policyId,policyName,premium,amount,agelimit,active, { from: account });
+        alert("Update policy successfully!");
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to update policy.");
+      }
+    });
+  },
+
+  handleViewArchivedPolicy: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.AdminInsurancePolicy.deployed();
+
+    try {
+        const archivedPolicyIds = await instance.getAllArchivedPolicies.call();
+
+        const policyDetailsDiv = document.getElementById("policyDetails");
+        policyDetailsDiv.innerHTML = ""; // Clear any previous content
+
+        // Loop through the archived policies and display them
+        for (let i = 0; i < archivedPolicyIds.length; i++) {
+            const policyId = archivedPolicyIds[i].toNumber();
+
+            // Fetch the policy details
+            const policy = await instance.getPolicy.call(policyId);
+            const policyName = policy[0];
+            const premium = policy[1].toString();
+            const coverageAmount = policy[2].toString();
+            const ageLimit = policy[3].toString();
+            const isActive = policy[4];
+
+            // Append the policy details to the UI
+            policyDetailsDiv.innerHTML += `
+                <div>
+                    <h4>Policy ID: ${policyId}</h4>
+                    <p><strong>Name:</strong> ${policyName}</p>
+                    <p><strong>Premium:</strong> ${premium}</p>
+                    <p><strong>Coverage Amount:</strong> ${coverageAmount}</p>
+                    <p><strong>Age Limit:</strong> ${ageLimit}</p>
+                    <p><strong>Active:</strong> ${isActive ? "Yes" : "No"}</p>
+                    <hr>
+                </div>`;
+        }
+
+        if (archivedPolicyIds.length === 0) {
+            policyDetailsDiv.innerHTML = "<p>No archived policies available.</p>";
+        }
+
+    } catch (err) {
+        console.error(err.message);
+        alert("Failed to fetch archived policies.");
+    }
+},
+
+  handleViewPolicy: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.AdminInsurancePolicy.deployed();
+
+    try {
+        const activePolicyIds = await instance.getAllActivePolicies.call();
+
+        const policyDetailsDiv = document.getElementById("policyDetails2");
+        policyDetailsDiv.innerHTML = ""; // Clear any previous content
+
+        // Loop through the active policies and display them
+        for (let i = 0; i < activePolicyIds.length; i++) {
+            const policyId = activePolicyIds[i].toNumber();
+
+            // Fetch the policy details
+            const policy = await instance.getPolicy.call(policyId);
+            const policyName = policy[0];
+            const premium = policy[1].toString();
+            const coverageAmount = policy[2].toString();
+            const ageLimit = policy[3].toString();
+            const isActive = policy[4];
+
+            // Append the policy details to the UI
+            policyDetailsDiv.innerHTML += `
+                <div>
+                    <h4>Policy ID: ${policyId}</h4>
+                    <p><strong>Name:</strong> ${policyName}</p>
+                    <p><strong>Premium:</strong> ${premium}</p>
+                    <p><strong>Coverage Amount:</strong> ${coverageAmount}</p>
+                    <p><strong>Age Limit:</strong> ${ageLimit}</p>
+                    <p><strong>Active:</strong> ${isActive ? "Yes" : "No"}</p>
+                    <hr>
+                </div>`;
+        }
+
+        if (activePolicyIds.length === 0) {
+            policyDetailsDiv.innerHTML = "<p>No active policies available.</p>";
+        }
+
+    } catch (err) {
+        console.error(err.message);
+        alert("Failed to fetch policies.");
+    }
+},
 };
 
 $(function () {
