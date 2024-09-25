@@ -80,6 +80,8 @@ App = {
     $(document).on("click", "#removeAdminBtn", App.handleRemoveAdmin);
 
     // Payment Module
+    $(document).on("click", "#viewTotalMoneyBtn", App.handleViewTotalMoney);
+    $(document).on("click", "#withdrawMoneyBtn", App.handleWithdrawMoney);
     $(document).on("click", "#pAddAdminBtn", App.handlePAddAdmin);
     $(document).on("click", "#updatePayDateBtn", App.handleUpdatePayDate);
     $(document).on("click", "#approveInsuranceBtn", App.handlePApproveInsurance);
@@ -94,7 +96,7 @@ App = {
   // Admin Management
   handleAddAdmin: async function (event) {
     event.preventDefault();
-  
+
     const adminAddress = $("#assignAdminAddress").val();
 
     // Simple Validation Rules
@@ -104,13 +106,13 @@ App = {
     }
 
     const instance = await App.contracts.UserAuth.deployed();
-  
+
     web3.eth.getAccounts(async function (error, accounts) {
       if (error) console.log(error);
       const account = accounts[0];
-  
+
       try {
-        await instance.assignAdmin(adminAddress,{from: account });
+        await instance.assignAdmin(adminAddress, { from: account });
         alert("Admin added successfully.");
       } catch (err) {
         console.error(err.message);
@@ -253,8 +255,7 @@ App = {
       } else {
         for (let i = 0; i < claimIds.length; i++) {
           $("#unprocessedClaims").append(
-            `<p>Claim ID: ${claimIds[i]} - Claim Amount: ${
-              claimAmount[i] / 1e18
+            `<p>Claim ID: ${claimIds[i]} - Claim Amount: ${claimAmount[i] / 1e18
             } ETH</p>`
           );
         }
@@ -286,8 +287,7 @@ App = {
       } else {
         for (let i = 0; i < userAddresses.length; i++) {
           $("#allUnprocessedClaims").append(
-            `<p>User: ${userAddresses[i]} - Claim ID: ${
-              claimIds[i]
+            `<p>User: ${userAddresses[i]} - Claim ID: ${claimIds[i]
             } - Claim Amount: ${claimAmount[i] / 1e18} ETH</p>`
           );
         }
@@ -451,6 +451,44 @@ App = {
   },
 
   // Payment Module
+  handleViewTotalMoney: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const money = await instance.viewTotalMoney({ from: account });
+        const displayMoney = money && money.toString() !== "0" ? money.toString() : "0";
+        $("#totalMoneyDisplay").text(`Total Ether in contract: ${displayMoney} ETH`);
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
+  handleWithdrawMoney: async function (event) {
+    event.preventDefault();
+
+    const amount = $("#withdrawAmount").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const money = await instance.withdrawMoney(amount, { from: account });
+        alert(`Successfully withdrew ${money} ETH.`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Withdrawal failed: " + err.message);
+      }
+    });
+  },
 
   handlePAddAdmin: async function (event) {
     event.preventDefault();
@@ -628,7 +666,7 @@ App = {
       }
     });
   }
-  
+
 };
 
 $(function () {
