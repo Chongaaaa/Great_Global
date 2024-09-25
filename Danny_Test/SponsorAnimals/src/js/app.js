@@ -50,7 +50,6 @@ App = {
 
   bindEvents: function () {
     // Claims Module
-    $(document).on("click", "#addAdminBtn", App.handleAddAdmin);
     $(document).on("click", "#addUserBtn", App.handleAddUser);
     $(document).on("click", "#addClaimBtn", App.handleAddClaim);
     $(document).on("click", "#approveClaimBtn", App.handleApproveClaim);
@@ -67,29 +66,65 @@ App = {
     );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
 
-
     // User Module
     $(document).on("click", "#registerBtn", App.handleRegister);
     $(document).on("click", "#signinBtn", App.handleSignin);
     $(document).on("click", "#resetpwBtn", App.handleReset);
+    $(document).on("click", "#addAdminBtn", App.handleAddAdmin);
+    $(document).on("click", "#removeAdminBtn", App.handleRemoveAdmin);
   },
 
-  // Claim Module
+  // Admin Management
   handleAddAdmin: async function (event) {
     event.preventDefault();
+  
+    const adminAddress = $("#assignAdminAddress").val();
 
-    const adminAddress = $("#adminAddress").val();
-    const instance = await App.contracts.ClaimProcessing.deployed();
+    // Simple Validation Rules
+    if (!adminAddress || adminAddress.trim() === "") {
+      alert("Please enter your address.");
+      return;
+    }
+
+    const instance = await App.contracts.UserAuth.deployed();
+  
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+  
+      try {
+        await instance.assignAdmin(adminAddress,{from: account });
+        alert("Admin added successfully.");
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to add admin.");
+      }
+    });
+  },
+
+  handleRemoveAdmin: async function (event) {
+    event.preventDefault();
+
+    const adminAddress = $("#removeAdminAddress").val();
+
+    // Simple Validation Rules
+    if (!adminAddress || adminAddress.trim() === "") {
+      alert("Please enter your address.");
+      return;
+    }
+
+    const instance = await App.contracts.UserAuth.deployed();
 
     web3.eth.getAccounts(async function (error, accounts) {
       if (error) console.log(error);
       const account = accounts[0];
 
       try {
-        await instance.addAdmin(adminAddress, { from: account });
-        alert("Admin added successfully.");
+        await instance.removeAdmin(adminAddress, { from: account });
+        alert("Admin removed successfully.");
       } catch (err) {
         console.error(err.message);
+        alert("Failed to remove admin.");
       }
     });
   },
@@ -186,9 +221,12 @@ App = {
     try {
       console.log(Web3.version);
       const userAddress = $("#viewClaimsUserAddress").val();
-      const [claimIds, claimAmount] = await instance.getUnprocessedClaims(userAddress, {
-        from: web3.eth.accounts[0],
-      });
+      const [claimIds, claimAmount] = await instance.getUnprocessedClaims(
+        userAddress,
+        {
+          from: web3.eth.accounts[0],
+        }
+      );
 
       // Clear the div before adding new content
       $("#unprocessedClaims").html("");
@@ -198,7 +236,9 @@ App = {
       } else {
         for (let i = 0; i < claimIds.length; i++) {
           $("#unprocessedClaims").append(
-            `<p>Claim ID: ${claimIds[i]} - Claim Amount: ${claimAmount[i] / 1e18} ETH</p>`
+            `<p>Claim ID: ${claimIds[i]} - Claim Amount: ${
+              claimAmount[i] / 1e18
+            } ETH</p>`
           );
         }
       }
@@ -214,19 +254,24 @@ App = {
 
     try {
       console.log(Web3.version);
-      const [userAddresses, claimIds, claimAmount] = await instance.getAllUnprocessedClaims({
-        from: web3.eth.accounts[0],
-      });
+      const [userAddresses, claimIds, claimAmount] =
+        await instance.getAllUnprocessedClaims({
+          from: web3.eth.accounts[0],
+        });
 
       // Clear the div before adding new content
       $("#allUnprocessedClaims").html("");
 
       if (userAddresses.length === 0) {
-        $("#allUnprocessedClaims").append(`<p>No unprocessed claims found.</p>`);
+        $("#allUnprocessedClaims").append(
+          `<p>No unprocessed claims found.</p>`
+        );
       } else {
         for (let i = 0; i < userAddresses.length; i++) {
           $("#allUnprocessedClaims").append(
-            `<p>User: ${userAddresses[i]} - Claim ID: ${claimIds[i]} - Claim Amount: ${claimAmount[i] / 1e18} ETH</p>`
+            `<p>User: ${userAddresses[i]} - Claim ID: ${
+              claimIds[i]
+            } - Claim Amount: ${claimAmount[i] / 1e18} ETH</p>`
           );
         }
       }
@@ -264,8 +309,46 @@ App = {
 
     const name = $("#signupName").val();
     const email = $("#signupEmail").val();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const age = $("#signupAge").val();
     const password = $("#signupPassword").val();
+
+    // Simple Validation Rules
+    if (!name || name.trim() === "") {
+      alert("Please enter your name.");
+      return;
+    }
+
+    if (!email || email.trim() === "") {
+      alert("Please enter your email.");
+      return;
+    }
+
+    // Basic email validation pattern
+    if (!emailPattern.test(email)) {
+      alert("Please enter a valid email address. (e.g., example@domain.com)");
+      return;
+    }
+
+    if (!age || isNaN(age)) {
+      alert("Please enter a valid age.");
+      return;
+    }
+    if (age < 18) {
+      alert("You must be at least 18 years old to register.");
+      return;
+    }
+
+    if (!password || password.trim() === "") {
+      alert("Please enter your password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+
     const instance = await App.contracts.UserAuth.deployed();
 
     web3.eth.getAccounts(async function (error, accounts) {
@@ -274,9 +357,10 @@ App = {
 
       try {
         await instance.register(name, email, age, password, { from: account });
-        alert("User added successfully.");
+        alert("User registered successfully!");
       } catch (err) {
         console.error(err.message);
+        alert("Failed to Register.");
       }
     });
   },
@@ -284,55 +368,69 @@ App = {
   handleSignin: async function (event) {
     event.preventDefault();
 
-    try {
-      console.log(Web3.version);
-      const identifier = document.getElementById("signinIdentifier").value; // Can be email or name
-      const password = document.getElementById("signinPassword").value;
+    const identifier = $("#signinIdentifier").val(); // Can be email or name
+    const password = $("#signinPassword").val();
 
-      if (!identifier || !password) {
-        alert("Please enter all required fields.");
-        return;
-      }
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      await contract.methods
-        .signIn(identifier, password)
-        .call({ from: accounts[0] });
-
-      alert("Sign in successful!");
-    } catch (error) {
-      alert("Invalid Name or Password.");
+    // Validate the identifier (basic check)
+    if (!identifier || identifier.trim() === "") {
+      alert("Please enter your name or email.");
+      return;
     }
+
+    if (!password || password.trim() === "") {
+      alert("Please enter your password.");
+      return;
+    }
+
+    const instance = await App.contracts.UserAuth.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+
+      try {
+        await instance.signIn(identifier, password, { from: account });
+        alert("Sign In successfully!");
+      } catch (err) {
+        console.error(err.message);
+        alert("Invalid Name or Password.");
+      }
+    });
   },
 
   handleReset: async function (event) {
     event.preventDefault();
 
-    try {
-      const identifier = document.getElementById("resetIdentifier").value; // Can be email or address
-      const newPassword = document.getElementById("newPassword").value;
+    const identifier = $("#resetIdentifier").val(); // Can be email or address
+    const newPassword = $("#newPassword").val();
 
-      if (!identifier || !newPassword) {
-        alert("Please enter all required fields.");
-        return;
-      }
-
-      // Fetch accounts only if not already connected
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      // Send the transaction once, check for connected account and address match
-      await contract.methods
-        .resetPassword(identifier, newPassword)
-        .send({ from: accounts[0] });
-
-      alert("Password reset successfully!");
-    } catch (error) {
-      console.error("Error resetting password:", error);
-      alert("Failed to reset password.");
+    // Validate the identifier (basic check)
+    if (!identifier || identifier.trim() === "") {
+      alert("Please enter your name or email.");
+      return;
     }
+
+    if (!newPassword || newPassword.trim() === "") {
+      alert("Please enter your password.");
+      return;
+    }
+
+    const instance = await App.contracts.UserAuth.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+
+      try {
+        await instance.resetPassword(identifier, newPassword, {
+          from: account,
+        });
+        alert("Password reset successfully!");
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to reset password.");
+      }
+    });
   },
 };
 

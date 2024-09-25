@@ -8,13 +8,18 @@ contract UserAuth {
         uint age;
         bytes32 hashedPassword;
         bool isRegistered;
+        uint256[] subscribedPackages;
     }
 
     mapping(address => User) public users;
     mapping(string => address) private emailToAddress;
     mapping(string => address) private nameToAddress;
-    
+
     address[] public registeredUsers; // External array to store all registered users' addresses
+    address[] public adminAddresses; // Array to store all admin addresses
+
+    mapping(address => bool) public admins; // Mapping to keep track of admins
+    address public owner; // Contract owner
 
     event UserRegistered(
         address indexed userAddress,
@@ -27,10 +32,28 @@ contract UserAuth {
         bytes32 oldHashedPassword,
         bytes32 newHashedPassword
     );
-    event InsuranceSubscribed(
-        address indexed userAddress,
-        uint256 insuranceId
-    );
+    event InsuranceSubscribed(address indexed userAddress, uint256 insuranceId);
+    event AdminAssigned(address indexed adminAddress);
+    event AdminRemoved(address indexed adminAddress);
+
+    modifier onlyOwner() {
+        require(
+            msg.sender == owner,
+            "Only contract owner can perform this action"
+        );
+        _;
+    }
+
+    modifier onlyAdmin() {
+        require(admins[msg.sender], "Only admins can perform this action");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender; // Set contract creator as the first admin
+        admins[msg.sender] = true;
+        adminAddresses.push(msg.sender); // Add owner to adminAddresses array
+    }
 
     // Register a new user with additional attributes and hashed password
     function register(
@@ -54,7 +77,8 @@ contract UserAuth {
             email: _email,
             age: _age,
             hashedPassword: hashedPassword,
-            isRegistered: true
+            isRegistered: true,
+            subscribedPackages: new uint256[](100)
         });
 
         // Map email and name to address for easy lookup
@@ -65,6 +89,34 @@ contract UserAuth {
         registeredUsers.push(msg.sender);
 
         emit UserRegistered(msg.sender, _name, _email, _age);
+    }
+
+    // Admin function to assign a new admin
+    function assignAdmin(address _adminAddress) public onlyOwner {
+        require(!admins[_adminAddress], "This address is already an admin.");
+        admins[_adminAddress] = true;
+
+        adminAddresses.push(_adminAddress); // Add to adminAddresses array
+
+        emit AdminAssigned(_adminAddress);
+    }
+
+    // Admin function to remove an admin
+    function removeAdmin(address _adminAddress) public onlyOwner {
+        require(admins[_adminAddress], "This address is not an admin.");
+        require(_adminAddress != owner, "Owner cannot be removed as admin.");
+        admins[_adminAddress] = false;
+
+        // Remove admin from adminAddresses array
+        for (uint i = 0; i < adminAddresses.length; i++) {
+            if (adminAddresses[i] == _adminAddress) {
+                adminAddresses[i] = adminAddresses[adminAddresses.length - 1];
+                adminAddresses.pop();
+                break;
+            }
+        }
+
+        emit AdminRemoved(_adminAddress);
     }
 
     // Sign in using either name or email and password

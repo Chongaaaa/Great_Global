@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin Management</h1>
+        <br>
+        </div>
+        <div class="nav-buttons">
+        <button onclick="showForm('assign')">Assign Admin</button>
+        <button onclick="showForm('remove')">Remove Admin</button>
+      </div>
+      <!-- Sign Up Form -->
+      <div id="assign-form">
+        <h2>Assign New Admin</h2>
+        <input type="text" id="assignAdminAddress" placeholder="Enter Admin Address">
+        <button id="addAdminBtn">Add Admin</button>
+      </div>
+      <div id="remove-form" class="form-container">
+            <h2>Remove Admin</h2>
+            <input type="text" id="removeAdminAddress" placeholder="Enter the admin address">
+            <button id="removeAdminBtn">Remove Admin</button>
+     </div><br>
+     <div class="nav-buttons">
+       <button onclick="location.href='index.html'">Back to Management Portal</button>
+   </div>
+    </div>
+
+
+    <script>
+        // Show the correct form and hide others
+        function showForm(formName) {
+          document.getElementById("assign-form").style.display =
+            formName === "assign" ? "block" : "none";
+          document.getElementById("remove-form").style.display =
+            formName === "remove" ? "block" : "none";
+        }
+      </script>
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <!-- Include all compiled plugins (below), or include individual files as needed -->
+      <script src="js/bootstrap.min.js"></script>
+      <script src="js/web3.min.js"></script>
+      <script src="js/truffle-contract.js"></script>
+      <script src="js/app.js"></script>
+</body>
+</html>
