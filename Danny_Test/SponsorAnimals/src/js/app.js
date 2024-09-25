@@ -405,6 +405,7 @@ App = {
       try {
         await instance.register(name, email, age, password, { from: account });
         alert("User registered successfully!");
+        window.location.href = "UserHomePage.html";
       } catch (err) {
         console.error(err.message);
         alert("Failed to Register.");
@@ -444,6 +445,7 @@ App = {
       try {
         await instance.signIn(identifier, password, { from: account });
         alert("Sign In successfully!");
+        window.location.href = "UserHomePage.html";
       } catch (err) {
         console.error(err.message);
         alert("Invalid Email or Password.");
