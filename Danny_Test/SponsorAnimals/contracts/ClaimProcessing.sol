@@ -21,14 +21,6 @@ contract ClaimProcessing {
         uint256 amount
     );
 
-    event adminAdded();
-
-    event userAdded();
-
-    event userRemoved();
-
-    event claimAdded();
-
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can perform this action");
         _;

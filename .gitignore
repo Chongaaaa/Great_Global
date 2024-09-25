@@ -1,2 +1,0 @@
-#ignore all json files in the build\contracts folder
-build/contracts/*.json
