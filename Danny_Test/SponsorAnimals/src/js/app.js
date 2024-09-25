@@ -85,13 +85,17 @@ App = {
     $(document).on("click", "#withdrawMoneyBtn", App.handleWithdrawMoney);
     $(document).on("click", "#pAddAdminBtn", App.handlePAddAdmin);
     $(document).on("click", "#updatePayDateBtn", App.handleUpdatePayDate);
+    $(document).on("click", "#viewUpdatedPayDateBtn", App.handleViewUpdatePayDate);
     $(document).on("click", "#approveInsuranceBtn", App.handlePApproveInsurance);
     $(document).on("click", "#registerCustomerBtn", App.handlePRegisterCustomer);
     $(document).on("click", "#addBalanceBtn", App.handleAddBalance);
     $(document).on("click", "#getCustomerBalanceBtn", App.handleGetCustomerBalance);
     $(document).on("click", "#updateAutoPayBtn", App.handleUpdateAutoPay);
+    $(document).on("click", "#viewAutoPayStatusBtn", App.handleViewUpdateAutoPay);
     $(document).on("click", "#cancelInsuranceBtn", App.handleCancelInsurance);
+    $(document).on("click", "#viewCancelInsuranceStatusBtn", App.handleViewCancelInsuranceStatus);
     $(document).on("click", "#manualPayBtn", App.handleManualPayment);
+    $(document).on("click", "#viewManualPaymentResultBtn", App.viewManualPaymentResultBtn);
   },
 
   // Admin Management
@@ -575,6 +579,27 @@ App = {
     });
   },
 
+  handleViewUpdatePayDate: async function (event) {
+    event.preventDefault();
+
+    const customerAddress = $("#payDateCustomerAddress").val();
+    const insuranceSubscriptionID = $("#payDateSubscriptionID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const newPayDate = await instance.chkInsurancePayDate(customerAddress, insuranceSubscriptionID, { from: account });
+        const payDateFormatted = new Date(newPayDate * 1000).toLocaleString();
+        $("#payDateResult").text(`Insurance pay date: ${payDateFormatted} `);
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
   handlePApproveInsurance: async function (event) {
     event.preventDefault();
 
@@ -677,6 +702,25 @@ App = {
     });
   },
 
+  handleViewUpdateAutoPay: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#autoPayInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const payStatus = await instance.chkAutoPayStatus(insuranceSubscriptionID, { from: account });
+        $("#autoPayResult").text(`Current insurance auto pay status: ${payStatus} `);
+      } catch (err) {
+        console.error(err.message);
+      }
+    });
+  },
+
   handleCancelInsurance: async function (event) {
     event.preventDefault();
 
@@ -693,6 +737,25 @@ App = {
       } catch (err) {
         console.error(err.message);
         alert("Failed to cancel insurance");
+      }
+    });
+  },
+
+  handleViewCancelInsuranceStatus: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#cancelInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const insStatus = await instance.chkCancelInsuranceStatus(insuranceSubscriptionID, { from: account });
+        $("#cancelInsuranceStatusResult").text(`Current insurance status: ${insStatus} `);
+      } catch (err) {
+        console.error(err.message);
       }
     });
   },
@@ -724,7 +787,30 @@ App = {
         alert("Payment failed");
       }
     });
-  }
+  },
+
+  viewManualPaymentResultBtn: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#manualPaySubscriptionID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+        if (error) console.error(error);
+        const account = accounts[0];
+
+        try {
+            const [payAmt, payDate] = await instance.chkManualPayInsurance(insuranceSubscriptionID, { from: account });
+            
+            // Convert the pay date timestamp to a human-readable date
+            const payDateFormatted = new Date(payDate * 1000).toLocaleString(); // Adjust as necessary for your locale
+
+            $("#manualPayResult").text(`Next payment: pay ${web3.utils.fromWei(payAmt.toString(), "ether")} ETH on ${payDateFormatted}`);
+        } catch (err) {
+            console.error(err.message);
+        }
+    });
+}
 
 };
 

@@ -31,6 +31,7 @@ contract PaymentModule {
     mapping(address => mapping(uint256 => InsuranceSubscription))
         public insuranceSubscribed;
     mapping(address => uint256) public customerBalances;
+    mapping(address => bool) private isCustomer;
 
     event AdminAdded(address indexed admin, bool status);
     event CustomerAdded(address indexed customer);
@@ -89,16 +90,7 @@ contract PaymentModule {
     }
 
     modifier onlyCustomer() {
-        bool validCustomer = false;
-        for (uint256 i; i < addedCustomer.length; i++) {
-            if (msg.sender == addedCustomer[i]) {
-                validCustomer = true;
-            }
-        }
-
-        if(validCustomer == false){
-            revert("Caller is not a customer.");
-        }
+        require(isCustomer[msg.sender], "Caller is not a customer.");
         _;
     }
 
@@ -110,8 +102,8 @@ contract PaymentModule {
 
     // Add customer
     function registerCustomer() external {
-        addedCustomer.push(msg.sender);
-        custCount++;
+        require(!isCustomer[msg.sender], "Customer already registered.");
+        isCustomer[msg.sender] = true;
         emit CustomerAdded(msg.sender);
     }
 
@@ -122,6 +114,8 @@ contract PaymentModule {
         uint256 payAmount,
         uint256 payDate
     ) external onlyAdminOrManager {
+        require(isCustomer[customerAddr], "Customer not found.");
+
         // Get current customer
         Customer storage currCustomer = customers[customerAddr];
 
@@ -229,7 +223,9 @@ contract PaymentModule {
         }
     }
 
-    function manualPay(uint256 _insuranceSubscriptionID) external payable {
+    function manualPay(
+        uint256 _insuranceSubscriptionID
+    ) external payable onlyCustomer {
         bool validity = chkSubscriptionValidityInCustomer(
             msg.sender,
             _insuranceSubscriptionID
@@ -251,9 +247,18 @@ contract PaymentModule {
 
             makePayment(msg.sender, currInsurance, currInsurance.payAmount);
             emit StatusMessage("Manual payment completed successfully!");
-        }else{
+        } else {
             revert("Insurance not exist.");
         }
+    }
+
+    function chkManualPayInsurance(
+        uint256 _insuranceSubscriptionID
+    ) external view onlyCustomer returns (uint256, uint256) {
+        return (
+            insuranceSubscribed[msg.sender][_insuranceSubscriptionID].payAmount,
+            insuranceSubscribed[msg.sender][_insuranceSubscriptionID].payDate
+        );
     }
 
     function makePayment(
@@ -301,9 +306,16 @@ contract PaymentModule {
                 _insuranceSubscriptionID,
                 currInsurance.autoPay
             );
-        }else{
+        } else {
             revert("Insurance not exist.");
         }
+    }
+
+    function chkAutoPayStatus(
+        uint256 _insuranceSubscriptionID
+    ) external view onlyCustomer returns (bool) {
+        return
+            insuranceSubscribed[msg.sender][_insuranceSubscriptionID].autoPay;
     }
 
     function updatePayDate(
@@ -331,9 +343,18 @@ contract PaymentModule {
                 _insuranceSubscriptionID,
                 currInsurance.payDate
             );
-        }else{
+        } else {
             revert("Insurance not exist.");
         }
+    }
+
+    function chkInsurancePayDate(
+        address customerAddress,
+        uint256 _insuranceSubscriptionID
+    ) external view onlyAdminOrManager returns (uint256) {
+        return
+            insuranceSubscribed[customerAddress][_insuranceSubscriptionID]
+                .payDate;
     }
 
     // Cancel Payment
@@ -355,8 +376,23 @@ contract PaymentModule {
                 _insuranceSubscriptionID,
                 currInsurance.insStatus
             );
-        }else{
+        } else {
             revert("Insurance not exist.");
+        }
+    }
+
+    function chkCancelInsuranceStatus(
+        uint256 _insuranceSubscriptionID
+    ) external view onlyCustomer returns (string memory) {
+        InsuranceSubscription storage currInsurance = insuranceSubscribed[
+            msg.sender
+        ][_insuranceSubscriptionID];
+        if (currInsurance.insStatus == InsuranceStatus.Pending) {
+            return "Pending";
+        } else if (currInsurance.insStatus == InsuranceStatus.Approved) {
+            return "Approved";
+        } else {
+            return "Cancelled";
         }
     }
 
@@ -366,7 +402,11 @@ contract PaymentModule {
     ) private view returns (bool validity) {
         Customer storage currCustomer = customers[custAddress];
         for (uint256 i = 0; i < currCustomer.subscribedPackages.length; i++) {
-            if (insuranceSubscribed[custAddress][currCustomer.subscribedPackages[i]].insuranceSubscriptionID == _insuranceSubscriptionID) {
+            if (
+                insuranceSubscribed[custAddress][
+                    currCustomer.subscribedPackages[i]
+                ].insuranceSubscriptionID == _insuranceSubscriptionID
+            ) {
                 return true;
             }
         }
@@ -375,7 +415,10 @@ contract PaymentModule {
 
     // Withdraw Ether from the contract
     function withdrawMoney(uint256 amount) public onlyOwner {
-        require(amount <= address(this).balance, "Insufficient balance to withdraw");
+        require(
+            amount <= address(this).balance,
+            "Insufficient balance to withdraw"
+        );
         payable(msg.sender).transfer(amount);
     }
 
