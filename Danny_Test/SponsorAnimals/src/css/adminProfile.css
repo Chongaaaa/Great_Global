@@ -91,13 +91,13 @@
     width: 20%;
 }
 
-#logOut {
+#logOutBtn {
     margin-bottom: 5%;
     height: 5vw;
     text-align: center;
 }
 
-#logOut button {
+#logOutBtn button {
     width: 15vw;
     height: 3.5vw;
     background-color: #F9F5EF;
@@ -106,7 +106,7 @@
     font-weight: bold;
 }
 
-#logOut button:hover{
+#logOutBtn button:hover{
     transition: 0.3s;
     background-color: #FD6574;
 }

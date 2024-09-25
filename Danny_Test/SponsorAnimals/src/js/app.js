@@ -85,6 +85,7 @@ App = {
     $(document).on("click", "#signinAdminBtn", App.handleSignInAdmin);
     $(document).on("click", "#addAdminBtn", App.handleAddAdmin);
     $(document).on("click", "#removeAdminBtn", App.handleRemoveAdmin);
+    $(document).on("click", "#logOutBtn", App.handleLogout); // Add logout event binding
 
     // Payment Module
     $(document).on("click", "#viewTotalMoneyBtn", App.handleViewTotalMoney);
@@ -457,7 +458,7 @@ App = {
       try {
         await instance.signIn(identifier, password, { from: account });
         alert("Sign In successfully!");
-        
+        window.location.href = "UserHomePage.html";
       } catch (err) {
         console.error(err.message);
         alert("Invalid Email or Password.");
@@ -502,6 +503,34 @@ App = {
       } catch (err) {
         console.error(err.message);
         alert("Failed to reset password.");
+      }
+    });
+  },
+
+   // Logout User or Admin based on their current session
+   handleLogout: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.UserAuth.deployed();
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.log(error);
+      const account = accounts[0];
+
+      try {
+        const isAdmin = await instance.admins(account); // Check if the account is admin
+        if (isAdmin) {
+          await instance.logoutAdmin({ from: account });
+          alert("Admin logged out successfully!");
+        } else {
+          await instance.logoutUser({ from: account });
+          alert("User logged out successfully!");
+        }
+
+        // Redirect to homepage after logging out
+        window.location.href = "index.html"; 
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to log out.");
       }
     });
   },

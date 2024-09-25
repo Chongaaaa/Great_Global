@@ -33,9 +33,10 @@ contract UserAuth {
         bytes32 oldHashedPassword,
         bytes32 newHashedPassword
     );
-
     event AdminAssigned(address indexed adminAddress);
     event AdminRemoved(address indexed adminAddress);
+    event UserLoggedOut(string indexed email);
+    event AdminLoggedOut(address indexed adminAddress);
 
     modifier onlyOwner() {
         require(
@@ -73,12 +74,11 @@ contract UserAuth {
     ) public {
         bool validEmail = true;
         for (uint i = 0; i < registeredUserEmails.length; i++) {
-            // Compare the hashes of the strings
             if (
                 keccak256(abi.encodePacked(_email)) ==
                 keccak256(abi.encodePacked(registeredUserEmails[i]))
             ) {
-                validEmail = false; // Set to false if email matches
+                validEmail = false;
             }
             require(validEmail, "Email is already registered by another user.");
         }
@@ -102,10 +102,10 @@ contract UserAuth {
 
     // Admin sign in using just the address
     function adminSignIn(address _adminAddress) public returns (bool) {
-        require(admins[_adminAddress], "This address is not an admin."); // Check if the address is an admin
+        require(admins[_adminAddress], "This address is not an admin.");
 
         currentAdmin = _adminAddress;
-        return true; // Admin sign-in successful
+        return true;
     }
 
     // Admin function to assign a new admin
@@ -113,7 +113,7 @@ contract UserAuth {
         require(!admins[_adminAddress], "This address is already an admin.");
         admins[_adminAddress] = true;
 
-        adminAddresses.push(_adminAddress); // Add to adminAddresses array
+        adminAddresses.push(_adminAddress);
 
         emit AdminAssigned(_adminAddress);
     }
@@ -124,7 +124,6 @@ contract UserAuth {
         require(_adminAddress != owner, "Owner cannot be removed as admin.");
         admins[_adminAddress] = false;
 
-        // Remove admin from adminAddresses array
         for (uint i = 0; i < adminAddresses.length; i++) {
             if (adminAddresses[i] == _adminAddress) {
                 adminAddresses[i] = adminAddresses[adminAddresses.length - 1];
@@ -136,11 +135,8 @@ contract UserAuth {
         emit AdminRemoved(_adminAddress);
     }
 
-    // Sign in using either name or email and password
-    function signIn(
-        string memory _identifier,
-        string memory _password
-    ) public view returns (bool) {
+    // Sign in using email and password
+    function signIn(string memory _identifier, string memory _password) public returns (bool) {
         User memory user = users[_identifier];
         require(user.isRegistered, "User not registered.");
         require(
@@ -148,19 +144,18 @@ contract UserAuth {
             "Password is incorrect."
         );
 
-        return true; // Sign in successful
+        currentUser = _identifier;
+        return true;
     }
 
-    // CHECK IF THIS NEEDS UPDATING
+    // Reset password
     function resetPassword(
         string memory _identifier,
         string memory _newPassword
     ) public {
         require(users[_identifier].isRegistered, "User not registered.");
-
         bool isValid = keccak256(abi.encodePacked(users[_identifier].email)) ==
             keccak256(abi.encodePacked(_identifier));
-
         require(isValid, "Invalid email.");
 
         bytes32 newHashedPassword = keccak256(abi.encodePacked(_newPassword));
@@ -176,7 +171,21 @@ contract UserAuth {
         emit PasswordReset(msg.sender, oldHashedPassword, newHashedPassword);
     }
 
-    // Function to get all registered user addresses
+    // Logout for the current user
+    function logoutUser() public {
+        require(bytes(currentUser).length > 0, "No user is currently signed in.");
+        emit UserLoggedOut(currentUser);
+        currentUser = ""; // Reset current user
+    }
+
+    // Logout for the current admin
+    function logoutAdmin() public {
+        require(currentAdmin != address(0), "No admin is currently signed in.");
+        emit AdminLoggedOut(currentAdmin);
+        currentAdmin = address(0); // Reset current admin
+    }
+
+    // Function to get all registered user emails
     function getAllRegisteredUsers() public view returns (string[] memory) {
         return registeredUserEmails;
     }
@@ -190,6 +199,4 @@ contract UserAuth {
         require(users[currentUser].isRegistered, "User not registered");
         return users[currentUser].age;
     }
-
-    // LOGOUT
 }
