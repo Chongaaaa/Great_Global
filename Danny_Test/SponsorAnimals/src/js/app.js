@@ -372,6 +372,7 @@ App = {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const age = $("#signupAge").val();
     const password = $("#signupPassword").val();
+    const refundAddress = $("#signupRefundAddress").val();
 
     // Simple Validation Rules
     if (!name || name.trim() === "") {
@@ -408,6 +409,12 @@ App = {
       alert("Password must be at least 6 characters long.");
       return;
     }
+    
+    // Add validation for Ethereum address
+    if (!web3.utils.isAddress(refundAddress)) {
+      alert("Please enter a valid Ethereum address.");
+      return;
+  }
 
     const instance = await App.contracts.UserAuth.deployed();
 
@@ -416,7 +423,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.register(name, email, age, password, { from: account });
+        await instance.register(name, email, age, password, refundAddress, { from: account });
         alert("User registered successfully!");
         window.location.href = "UserHomePage.html";
       } catch (err) {

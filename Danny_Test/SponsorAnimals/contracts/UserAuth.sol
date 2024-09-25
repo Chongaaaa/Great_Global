@@ -210,6 +210,4 @@ contract UserAuth {
     function getCurrentAdmin() public view returns (address) {
         return (currentAdmin);
     }
-
-    // LOGOUT
 }

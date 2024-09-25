@@ -1,11 +1,17 @@
 var Claims = artifacts.require("./ClaimProcessing.sol");
 var Users = artifacts.require("./UserAuth.sol");
-var payment = artifacts.require("./PaymentModule.sol");
-var policy = artifacts.require("./AdminInsurancePolicy.sol");
+var PaymentModule = artifacts.require("./PaymentModule.sol");
+var AdminInsurancePolicy = artifacts.require("./AdminInsurancePolicy.sol");
 
-module.exports = function (deployer) {
-  deployer.deploy(Claims);
-  deployer.deploy(Users);
-  deployer.deploy(payment);
-  deployer.deploy(policy);
+module.exports = async function (deployer) {
+  // Deploy UserAuth first
+  await deployer.deploy(Users);
+  const userAuthInstance = await Users.deployed();
+
+  // Deploy other contracts
+  await deployer.deploy(Claims);
+  await deployer.deploy(PaymentModule);
+  
+  // Now deploy AdminInsurancePolicy, passing the address of UserAuth
+  await deployer.deploy(AdminInsurancePolicy, userAuthInstance.address);
 };
