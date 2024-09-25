@@ -97,7 +97,7 @@ App = {
   // Admin Management
   handleSignInAdmin: async function (event) {
     event.preventDefault();
-  
+
     const adminAddress = $("#signinAdminAddress").val();
 
     // Simple Validation Rules
@@ -107,13 +107,13 @@ App = {
     }
 
     const instance = await App.contracts.UserAuth.deployed();
-  
+
     web3.eth.getAccounts(async function (error, accounts) {
       if (error) console.log(error);
       const account = accounts[0];
-  
+
       try {
-        await instance.adminSignIn(adminAddress,{from: account });
+        await instance.adminSignIn(adminAddress, { from: account });
         alert("Sign In successfully.");
         // Redirect to AdminHomePage.html after successful sign-in
         window.location.href = "AdminHomePage.html";
@@ -416,7 +416,7 @@ App = {
   handleSignin: async function (event) {
     event.preventDefault();
 
-    const identifier = $("#signinIdentifier").val(); 
+    const identifier = $("#signinIdentifier").val();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const password = $("#signinPassword").val();
 
@@ -456,7 +456,7 @@ App = {
   handleReset: async function (event) {
     event.preventDefault();
 
-    const identifier = $("#resetIdentifier").val(); 
+    const identifier = $("#resetIdentifier").val();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newPassword = $("#newPassword").val();
 
@@ -627,10 +627,11 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.addBalance({ from: account, value: amount * 1e18});
+        await instance.addBalance({ from: account, value: amount * 1e18 });
         alert("Balance added successfully.");
       } catch (err) {
         console.error(err.message);
+        alert("Failed to add balance");
       }
     });
   },
@@ -650,6 +651,7 @@ App = {
         $("#customerBalanceDisplay").text(`Your balance is: ${displayBalance} ETH`);
       } catch (err) {
         console.error(err.message);
+        alert("Failed to get customer balance");
       }
     });
   },
@@ -669,6 +671,7 @@ App = {
         alert("AutoPay status updated successfully.");
       } catch (err) {
         console.error(err.message);
+        alert("Failed to change auto pay status");
       }
     });
   },
@@ -688,6 +691,7 @@ App = {
         alert("Insurance subscription cancelled successfully.");
       } catch (err) {
         console.error(err.message);
+        alert("Failed to cancel insurance");
       }
     });
   },
@@ -704,9 +708,19 @@ App = {
 
       try {
         await instance.manualPay(insuranceSubscriptionID, { from: account, value: $("#payAmountInput").val() * 1e18 });
+
+        // Fetch updated subscription details, particularly payDate
+        const insuranceSubscription = await instance.insuranceSubscribed(account, insuranceSubscriptionID);
+        const nextPayDateTimestamp = insuranceSubscription.payDate.toString();
+
+        // Convert the Unix timestamp to a readable date
+        const nextPayDate = new Date(nextPayDateTimestamp * 1000).toLocaleDateString();
+        $("#nextPayDateDisplay").html(`Your next payment is due on: <strong>${nextPayDate}</strong>`);
+
         alert("Manual payment completed successfully.");
       } catch (err) {
         console.error(err.message);
+        alert("Payment failed");
       }
     });
   }
