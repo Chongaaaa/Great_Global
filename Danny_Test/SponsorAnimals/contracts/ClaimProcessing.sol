@@ -14,12 +14,16 @@ contract ClaimProcessing {
     mapping(address => mapping(uint256 => Claim)) public claims;
     mapping(address => uint256) public claimCount;
 
+    event ClaimAdded(address indexed user, uint256 claimId, uint256 amount);
+
     event ClaimProcessed(
         address indexed user,
         uint256 indexed claimId,
         bool claimValid,
         uint256 amount
     );
+
+    event FundsAdded(address indexed admin, uint256 amount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can perform this action");
@@ -95,6 +99,7 @@ contract ClaimProcessing {
         amount = amount; // convert eth to wei
         claims[user][claimId] = Claim(amount, false);
         claimCount[user]++;
+        emit ClaimAdded(msg.sender, claimId, amount);
     }
 
     function approveClaim(
@@ -188,6 +193,7 @@ contract ClaimProcessing {
 
     function fund() public payable onlyAdmins {
         require(msg.value > 0, "Amount must be greater than 0.");
+        emit FundsAdded(msg.sender, msg.value);
     }
 
     receive() external payable {}

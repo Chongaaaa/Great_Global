@@ -71,6 +71,7 @@ App = {
       App.handleViewAllUnprocessedClaims
     );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
+    $(document).on("click", "#viewFundsBtn", App.handleViewFunds);
 
     // User Module
     $(document).on("click", "#registerBtn", App.handleRegister);
@@ -349,6 +350,26 @@ App = {
     });
   },
 
+  handleViewFunds: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.ClaimProcessing.deployed();
+
+    try {
+      console.log(Web3.version);
+      const fundAmount = await instance.getBalance({
+        from: web3.eth.accounts[0],
+      });
+
+      // Clear the div before adding new content
+      console.log(fundAmount);
+      $("#contractBalance").html(fundAmount / 1e18 + " ETH");
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  },
+
   // User Module
 
   handleRegister: async function (event) {
@@ -445,7 +466,7 @@ App = {
       try {
         await instance.signIn(identifier, password, { from: account });
         alert("Sign In successfully!");
-        
+
       } catch (err) {
         console.error(err.message);
         alert("Invalid Email or Password.");
