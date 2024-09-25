@@ -279,6 +279,10 @@ contract PaymentModule {
         emit StatusMessage("Amount had been topped up successfully");
     }
 
+    function getCustomerBalance() external view onlyCustomer returns (uint256) {
+        return customerBalances[msg.sender];
+    }
+
     function updateAutoPay(
         uint256 _insuranceSubscriptionID
     ) external onlyCustomer {
@@ -300,10 +304,6 @@ contract PaymentModule {
         }else{
             revert("Insurance not exist.");
         }
-    }
-
-    function getCustomerBalance() external view onlyCustomer returns (uint256) {
-        return customerBalances[msg.sender];
     }
 
     function updatePayDate(

@@ -445,7 +445,7 @@ App = {
       try {
         await instance.signIn(identifier, password, { from: account });
         alert("Sign In successfully!");
-        window.location.href = "UserHomePage.html";
+        
       } catch (err) {
         console.error(err.message);
         alert("Invalid Email or Password.");
@@ -529,7 +529,7 @@ App = {
         alert(`Successfully withdrew ${money} ETH.`);
       } catch (err) {
         console.error(err.message);
-        alert("Withdrawal failed: " + err.message);
+        alert("Withdrawal failed.");
       }
     });
   },
@@ -609,6 +609,7 @@ App = {
 
       try {
         await instance.registerCustomer({ from: account });
+        console.account(address);
         alert("Customer registered successfully.");
       } catch (err) {
         console.error(err.message);

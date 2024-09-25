@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/payment.css">
+    <link rel="stylesheet" href="css/adminProfile.css">
     <title>Profile</title>
 </head>
 
@@ -30,7 +30,28 @@
     </header>
 
     <main>
-        
+
+        <div id="viewMoney">
+            <button id="viewTotalMoneyBtn">Click to view Total Money</button>
+            <p id="totalMoneyDisplay"></p>
+        </div>
+
+        <div id="withdrawMoney">
+            <div id="word">
+                <h2>Money Withdrawal</h2>
+            </div>
+            <div id="input">
+                <label for="withdrawAmount">Amount to Withdraw (in wei): </label>
+                <input type="text" id="withdrawAmount" placeholder="Enter amount in wei">
+                <button id="withdrawMoneyBtn">Withdraw</button>
+            </div>
+        </div>
+
+        <a href="payment.html">pay</a>
+        <div id="logOut">
+            <button>Log Out</button>
+        </div>
+
     </main>
 
     <footer>
