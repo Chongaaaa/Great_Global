@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <title>Insurance Payment Module</title>
+  </head>
+  <body>
+    <h1>Insurance Payment Module</h1>
+
+    <!-- Admin Section -->
+    <h2>Admin Section</h2>
+    <label for="pAdminAddress">Admin Address: </label>
+    <input type="text" id="pAdminAddress" placeholder="Enter admin address" />
+    <br />
+    <button id="pAddAdminBtn">Add Admin</button>
+
+    <br /><br />
+    <label for="payDateCustomerAddress">Customer Address: </label>
+    <input
+      type="text"
+      id="payDateCustomerAddress"
+      placeholder="Enter customer address"
+    />
+    <br />
+    <label for="payDateInsuranceID">Insurance Subscription ID: </label>
+    <input
+      type="text"
+      id="payDateInsuranceID"
+      placeholder="Enter insurance subscription ID"
+    />
+    <br />
+    <label for="newPayDate">New Pay Date (Timestamp): </label>
+    <input type="text" id="newPayDate" placeholder="Enter new pay date" />
+    <br />
+    <button id="updatePayDateBtn">Update Pay Date</button>
+
+    <br /><br />
+
+    <!-- Customer Section -->
+    <h2>Customer Section</h2>
+    <label for="pRegisterCustomer">Register as User: </label>
+    <br />
+    <button id="registerCustomerBtn">Register User</button>
+
+    <br /><br />
+    <label for="addBalanceInput">Add Balance: </label>
+    <input type="text" id="addBalanceInput" placeholder="Enter amount in ETH" />
+    <br />
+    <button id="addBalanceBtn">Add Balance</button>
+
+    <br /><br />
+    <label for="autoPayInsuranceID">Insurance Subscription ID: </label>
+    <input
+      type="text"
+      id="autoPayInsuranceID"
+      placeholder="Enter insurance subscription ID"
+    />
+    <br />
+    <button id="updateAutoPayBtn">Update AutoPay</button>
+
+    <br /><br />
+
+    <!-- Insurance Section -->
+    <h2>Insurance Section</h2>
+    <label for="pInsuranceID">Insurance ID: </label>
+    <input type="text" id="pInsuranceID" placeholder="Enter insurance ID" />
+    <br />
+    <label for="pPayAmount">Pay Amount: </label>
+    <input type="text" id="pPayAmount" placeholder="Enter pay amount" />
+    <br />
+    <label for="pPayDate">Pay Date: </label>
+    <input type="text" id="pPayDate" placeholder="Enter pay date (timestamp)" />
+    <br />
+    <button id="approveInsuranceBtn">Approve Insurance</button>
+
+    <br /><br />
+
+    <!-- Payment Section -->
+    <h2>Payment Section</h2>
+    <label for="manualPayInsuranceID">Insurance Subscription ID: </label>
+    <input
+      type="text"
+      id="manualPayInsuranceID"
+      placeholder="Enter insurance subscription ID"
+    />
+    <br />
+    <label for="payAmountInput">Pay Amount: </label>
+    <input type="text" id="payAmountInput" placeholder="Enter payment amount" />
+    <br />
+    <button id="manualPayBtn">Manual Payment</button>
+
+    <br /><br />
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

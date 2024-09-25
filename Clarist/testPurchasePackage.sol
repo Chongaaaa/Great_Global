@@ -33,25 +33,25 @@ contract purchasePackage {
 
     mapping(address => User) public users; // Maps address to User struct
     mapping(uint256 => InsurancePackage) public insurancePackages; // Maps packageId to InsurancePackage
-    mapping(address => mapping(uint256 => SubscribedPackage)) public subscribedPackageIndex; // Maps user subscriptions to detailed info
-    mapping(address => mapping(uint256 => ApprovalRequest)) public approvalRequests; // Maps users' approval requests
-    mapping(address => uint256) public approvalRequestCount; // Count of approval requests per user
+    mapping(address => mapping(uint256 => SubscribedPackage)) public subscribedPackageIndex; //Maps user address and subscriptionID to a SubscribedPackage, storing subscription details for that user.
+    mapping(address => mapping(uint256 => ApprovalRequest)) public approvalRequests; // Map user address and a request ID to an ApprovalRequest, keeping track of pending approval requests
+    mapping(address => uint256) public approvalRequestCount; // Tracks how many approval requests each user made, each request has a unique ID for each user.
 
-    address[] public userAddresses; // Array to store all registered user addresses (customers)
+    address[] public userAddresses; // Array to store all registered user addresses 
     uint256 public packageCount = 0; // Counter for total insurance packages
-    uint256 private custCount = 0; // Counter for registered customers
+    uint256 private userCount = 0; // Counter for registered users
 
     event PackageSubscribed(
-        address user,
+        address indexed user,
         uint256 packageId,
         uint256 payAmount,
         uint256 payDate,
         bool autoPay,
         bool isActive
     );
-    event ApprovalRequested(address user, uint256 packageId);
-    event PackageApproved(address user, uint256 packageId);
-    event CustomerAdded(address customer); // Event for registering a customer
+    event ApprovalRequested(address indexed user, uint256 packageId);
+    event PackageApproved(address indexed user, uint256 packageId);
+    event UserAdded(address indexed user); // Event for registering a user
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "Only admin can perform this action");
@@ -67,20 +67,20 @@ contract purchasePackage {
         addInsurancePackage("Senior Health Package", 50, 80);
     }
 
-    // Function to register customers
-    function registerCustomer(string memory _name, uint256 _age) public {
+    // Function to register users
+    function registerUser(string memory _name, uint256 _age) public {
         require(users[msg.sender].age == 0, "User already registered");
-        
+
         User storage user = users[msg.sender];
         user.name = _name;
         user.age = _age;
 
-        // Add the user to the customer list if it's their first registration
+        // Add the user to the user list if it's their first registration
         userAddresses.push(msg.sender);
-        custCount++;
+        userCount++;
 
         // Emit event to confirm the user has been added
-        emit CustomerAdded(msg.sender);
+        emit UserAdded(msg.sender);
     }
 
     // Admin adds a new insurance package to the system
@@ -120,8 +120,7 @@ contract purchasePackage {
     function approvePackageSubscription(
         address _user, 
         uint256 _requestId, 
-        uint256 _payAmount, 
-        uint256 _payDate 
+        uint256 _payAmount
     ) public onlyAdmin {
 
         // Retrieve the current user
@@ -147,7 +146,7 @@ contract purchasePackage {
             subscriptionID: currUser.subscribedPackages.length,
             packageId: packageId,
             payAmount: _payAmount,
-            payDate: block.timestamp, // set today
+            payDate: block.timestamp, // Use block.timestamp as the payment date
             autoPay: true,
             isActive: true
         });
@@ -163,7 +162,7 @@ contract purchasePackage {
 
         // Emit the relevant event
         emit PackageApproved(_user, packageId);
-        emit PackageSubscribed(_user, packageId, _payAmount, _payDate, true, true);
+        emit PackageSubscribed(_user, packageId, _payAmount, block.timestamp, true, true);
     }
 
     // Function to get all pending approvals
@@ -220,13 +219,13 @@ contract purchasePackage {
         return userSubscriptions;
     }
 
-    // Get the total count of registered customers
-    function getTotalCustomers() public view returns (uint256) {
-        return custCount;
+    // Get the total count of registered users
+    function getTotalUsers() public view returns (uint256) {
+        return userCount;
     }
 
-    // Retrieve all registered customers
-    function getAllCustomers() public view returns (address[] memory) {
+    // Retrieve all registered users
+    function getAllUsers() public view returns (address[] memory) {
         return userAddresses;
     }
 }
