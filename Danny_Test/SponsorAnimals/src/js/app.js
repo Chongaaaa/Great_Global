@@ -57,6 +57,12 @@ App = {
       App.contracts.ClaimProcessing.setProvider(App.web3Provider);
     });
 
+    $.getJSON("PurchasePackage.json", function (data) {
+      var PurchasePackageArtifact = data;
+      App.contracts.PurchasePackage = TruffleContract(PurchasePackageArtifact);
+      App.contracts.PurchasePackage.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 
@@ -1172,6 +1178,36 @@ App = {
       alert("Failed to view all subscriptions.");
     }
   },
+  // Display packages on the page
+  displayPackages: function (approvedPackages, cancelledPackages, pendingPackages) {
+    $("#approvedPackages").html("");
+    $("#cancelledPackages").html("");
+    $("#pendingPackages").html("");
+
+    if (approvedPackages.length === 0) {
+      $("#approvedPackages").append("<p>No approved packages found.</p>");
+    } else {
+      approvedPackages.forEach(function (pkg) {
+        $("#approvedPackages").append(`<p>Email: ${pkg.userEmail}, Package ID: ${pkg.packageID}</p>`);
+      });
+    }
+
+    if (cancelledPackages.length === 0) {
+      $("#cancelledPackages").append("<p>No cancelled packages found.</p>");
+    } else {
+      cancelledPackages.forEach(function (pkg) {
+        $("#cancelledPackages").append(`<p>Email: ${pkg.userEmail}, Package ID: ${pkg.packageID}</p>`);
+      });
+    }
+
+    if (pendingPackages.length === 0) {
+      $("#pendingPackages").append("<p>No pending packages found.</p>");
+    } else {
+      pendingPackages.forEach(function (pkg) {
+        $("#pendingPackages").append(`<p>Email: ${pkg.userEmail}, Package ID: ${pkg.packageID}</p>`);
+      });
+    }
+  }
 };
 
 $(function () {
