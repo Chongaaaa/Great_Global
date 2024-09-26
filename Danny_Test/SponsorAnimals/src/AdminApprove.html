@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin - Approve Subscriptions</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.5/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>Admin - Approve Subscriptions</h1>
+
+    <!-- Admin Approve Subscription Section -->
+    <h3>Approve a User's Subscription</h3>
+    <label for="userEmail">User Email:</label>
+    <input type="text" id="userEmail" placeholder="Enter user's email">
+    <br>
+    <label for="approvePackageId">Package ID:</label>
+    <input type="text" id="approvePackageId" placeholder="Enter package ID">
+    <br>
+    <button id="approveSubscriptionBtn">Approve Subscription</button>
+
+    <!-- Admin View All Subscriptions Section -->
+    <h3>View All User Subscriptions</h3>
+    <button id="viewAllSubscriptionsBtn">View All Subscriptions</button>
+
+    <div>
+      <h4>Approved Packages</h4>
+      <div id="approvedPackages"></div>
+
+      <h4>Cancelled Packages</h4>
+      <div id="cancelledPackages"></div>
+
+      <h4>Pending Packages</h4>
+      <div id="pendingPackages"></div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+
+  </body>
+</html>

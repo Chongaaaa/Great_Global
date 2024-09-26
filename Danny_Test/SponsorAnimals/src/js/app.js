@@ -109,6 +109,15 @@ App = {
     $(document).on("click", "#UpdatePolicyBtn", App.handleUpdatePolicy);
     $(document).on("click", "#ArchievePolicyBtn", App.handleViewArchivedPolicy);
     $(document).on("click", "#ViewPolicyBtn", App.handleViewPolicy);
+
+    //Purchase Package
+    // - Admin
+    $(document).on("click", "#approveSubscriptionBtn", App.handleApproveSubscription);
+    $(document).on("click", "#viewAllSubscriptionsBtn", App.handleViewAllSubscriptions);
+    
+    // - User 
+    $(document).on("click", "#subscribePackageBtn", App.handleSubscribeToPackage);
+    $(document).on("click", "#viewPackagesBtn", App.handleViewPackages);
   },
 
   // Admin Management
@@ -1069,6 +1078,79 @@ App = {
         console.error(err.message);
         alert("Failed to fetch policies.");
     }
+},
+// Purchase Package
+// Handle user subscribing to a package
+handleSubscribeToPackage: async function (event) {
+  event.preventDefault();
+  
+  const packageId = $("#packageId").val();
+  const instance = await App.contracts.PurchasePackage.deployed();
+  
+  web3.eth.getAccounts(async function (error, accounts) {
+    if (error) console.error(error);
+    const account = accounts[0];
+    
+    try {
+      await instance.subscribeToPackage(packageId, { from: account });
+      alert("Subscription request sent successfully.");
+    } catch (err) {
+      console.error(err.message);
+      alert("Failed to subscribe to the package.");
+    }
+  });
+},
+
+// Handle admin approving a subscription
+handleApproveSubscription: async function (event) {
+  event.preventDefault();
+  
+  const userEmail = $("#userEmail").val();
+  const packageId = $("#approvePackageId").val();
+  const instance = await App.contracts.PurchasePackage.deployed();
+  
+  web3.eth.getAccounts(async function (error, accounts) {
+    if (error) console.error(error);
+    const account = accounts[0];
+    
+    try {
+      await instance.approveSubscription(userEmail, packageId, { from: account });
+      alert("Subscription approved successfully.");
+    } catch (err) {
+      console.error(err.message);
+      alert("Failed to approve subscription.");
+    }
+  });
+},
+
+// Handle viewing the user's packages
+handleViewPackages: async function (event) {
+  event.preventDefault();
+  
+  const instance = await App.contracts.PurchasePackage.deployed();
+  
+  try {
+    const [approvedPackages, cancelledPackages, pendingPackages] = await instance.viewPackages();
+    App.displayPackages(approvedPackages, cancelledPackages, pendingPackages);
+  } catch (err) {
+    console.error(err.message);
+    alert("Failed to view packages.");
+  }
+},
+
+// Handle admin viewing all subscriptions
+handleViewAllSubscriptions: async function (event) {
+  event.preventDefault();
+  
+  const instance = await App.contracts.PurchasePackage.deployed();
+  
+  try {
+    const [approvedPackages, cancelledPackages, pendingPackages] = await instance.viewAllSubscriptions();
+    App.displayPackages(approvedPackages, cancelledPackages, pendingPackages);
+  } catch (err) {
+    console.error(err.message);
+    alert("Failed to view all subscriptions.");
+  }
 },
 };
 
