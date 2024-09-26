@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/payment.css">
     <title>Home</title>
 </head>
 
@@ -30,7 +29,29 @@
     </header>
 
     <main>
-        
+        <h1>User - Subscribe to Package</h1>
+
+        <!-- User Subscribe to Package Section -->
+        <h3>Subscribe to a Package</h3>
+        <label for="packageId">Package ID:</label>
+        <input type="text" id="packageId" placeholder="Enter package ID">
+        <br>
+        <button id="subscribePackageBtn">Subscribe to Package</button>
+
+        <!-- User View Subscriptions Section -->
+        <h3>View My Subscriptions</h3>
+        <button id="viewPackagesBtn">View Packages</button>
+
+        <div>
+            <h4>Approved Packages</h4>
+            <div id="approvedPackages"></div>
+
+            <h4>Cancelled Packages</h4>
+            <div id="cancelledPackages"></div>
+
+            <h4>Pending Packages</h4>
+            <div id="pendingPackages"></div>
+        </div>
     </main>
 
     <footer>
