@@ -112,7 +112,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -125,7 +126,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -138,7 +140,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -157,7 +160,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -170,7 +174,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -260,7 +265,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -299,7 +305,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -358,7 +365,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_adminPolicyAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_userAuthAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"packageId\",\"type\":\"uint256\"}],\"name\":\"PackageSubscribed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"user\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"packageId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"enum PurchasePackage.InsuranceStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"SubscriptionApproved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"user\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"packageId\",\"type\":\"uint256\"}],\"name\":\"SubscriptionRequested\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"Subscriptions\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"packageId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payDate\",\"type\":\"uint256\"},{\"internalType\":\"enum PurchasePackage.InsuranceStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"adminContract\",\"outputs\":[{\"internalType\":\"contract AdminInsurancePolicy\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_user\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_packageID\",\"type\":\"uint256\"}],\"name\":\"approveSubscription\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_packageId\",\"type\":\"uint256\"}],\"name\":\"getPackageDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_packageId\",\"type\":\"uint256\"}],\"name\":\"subscribeToPackage\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"subscriptionCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"userAuthContract\",\"outputs\":[{\"internalType\":\"contract UserAuth\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"viewAllSubscriptions\",\"outputs\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"userEmail\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"packageID\",\"type\":\"uint256\"}],\"internalType\":\"struct PurchasePackage.PackageData[]\",\"name\":\"\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"userEmail\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"packageID\",\"type\":\"uint256\"}],\"internalType\":\"struct PurchasePackage.PackageData[]\",\"name\":\"\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"userEmail\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"packageID\",\"type\":\"uint256\"}],\"internalType\":\"struct PurchasePackage.PackageData[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"viewPackages\",\"outputs\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"userEmail\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"packageID\",\"type\":\"uint256\"}],\"internalType\":\"struct PurchasePackage.PackageData[]\",\"name\":\"\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"userEmail\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"packageID\",\"type\":\"uint256\"}],\"internalType\":\"struct PurchasePackage.PackageData[]\",\"name\":\"\",\"type\":\"tuple[]\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"userEmail\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"packageID\",\"type\":\"uint256\"}],\"internalType\":\"struct PurchasePackage.PackageData[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/PurchasePackage.sol\":\"PurchasePackage\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/AdminInsurancePolicy.sol\":{\"keccak256\":\"0xc90b4340341878550dcc0a12f20eae7303dcfcd4a27dbd5748a63cb3335df600\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://dd0105f9d7828f20a62d5b5aabc426577713fee73f437ccfd4314cd45bdcf28a\",\"dweb:/ipfs/QmQdX9fbgYTpo8H5XZ4yM9W6omK2SXHZURxrqT68XYfPie\"]},\"project:/contracts/PurchasePackage.sol\":{\"keccak256\":\"0x497b824f4a23adf58c346a6def6f74f78eac03a6d09f7ef6f1c8ec92b3a7cff9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2e289f140cd1ff88202b3f956ca44e3a9b47b0cc5fd8aab2f347e65f785878fb\",\"dweb:/ipfs/QmPJKTvw7vdZEtPNtFKWJcbXJwLXmdNRUXaJd4F13Hh6JR\"]},\"project:/contracts/UserAuth.sol\":{\"keccak256\":\"0xc6c4313b01336f2ca929c8bc6f44844be5f5b2fbb62c316f4de6be960dd92f2c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8bdf80b01d6d2263493027475ed329984b7468964872307be4fb27908ca46149\",\"dweb:/ipfs/QmUs62wBGtw7hzSeKxwaYw39LBASapgvAT9cs1eLh2KnHJ\"]}},\"version\":1}",
@@ -21657,9 +21665,17 @@
     "name": "solc",
     "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0x45eca884A16FEBA997B89e8Ea95b213e0fAb1a2E",
+      "transactionHash": "0xcdffb239205301b8cf44d11f6cb91424e49a7666b7e2398c4f49880c0e07d77a"
+    }
+  },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-09-26T00:06:41.839Z",
+  "updatedAt": "2024-09-26T00:12:19.679Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},
