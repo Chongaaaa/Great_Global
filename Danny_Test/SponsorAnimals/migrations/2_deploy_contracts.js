@@ -13,11 +13,12 @@ module.exports = async function (deployer) {
   await deployer.deploy(AdminInsurancePolicy, userAuthInstance.address);
   const adminInsuraceInstance = await AdminInsurancePolicy.deployed();
 
-  await deployer.deploy(PurchasePackage, userAuthInstance.address, adminInsuraceInstance.address);
+  await deployer.deploy(PurchasePackage, adminInsuraceInstance.address, userAuthInstance.address);
 
   // Deploy other contracts
   await deployer.deploy(Claims);
   await deployer.deploy(PaymentModule);
+ 
 
 
 };
