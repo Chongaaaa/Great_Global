@@ -65,6 +65,11 @@ contract PurchasePackage {
             "User does not meet the age limit for this package"
         );
 
+        // Check to make sure cannot subscribed redundent packageId
+        for (uint256 i = 0; i < subscriptionCount[user]; i++){
+            require(Subscriptions[user][i].packageId != _packageId, "You had subscribed the same package or waiting for approved.");
+        }
+
         // Create a subscription request
         Subscriptions[user][subscriptionCount[user]] = Subscription({
             packageId: _packageId,

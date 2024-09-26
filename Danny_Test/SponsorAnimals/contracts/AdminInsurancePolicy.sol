@@ -17,7 +17,7 @@ contract AdminInsurancePolicy {
     //address public admin;
     address public admin;
     mapping(uint256 => Policy) public policies;
-    uint256 public policyCount;
+    uint256 public policyCount = 0;
     UserAuth public userAuth; // Instance of UserAuth contract
 
     // Events
@@ -78,7 +78,6 @@ contract AdminInsurancePolicy {
         require(_coverageAmount > 0, "Coverage amount must be greater than 0");
         require(_ageLimit >= 0, "Age limit must be positive");
 
-        policyCount++;
         policies[policyCount] = Policy(
             _name,
             _premium,
@@ -94,6 +93,8 @@ contract AdminInsurancePolicy {
             _ageLimit,
             _isActive
         );
+        
+        policyCount++;
     }
 
     // Function to update an existing policy's details with validation
@@ -144,7 +145,7 @@ contract AdminInsurancePolicy {
     // New function to fetch all active policies
     function getAllActivePolicies() public view returns (uint256[] memory) {
         uint256 activeCount = 0;
-        for (uint256 i = 1; i <= policyCount; i++) {
+        for (uint256 i = 0; i <= policyCount; i++) {
             if (policies[i].isActive) {
                 activeCount++;
             }
@@ -152,7 +153,7 @@ contract AdminInsurancePolicy {
 
         uint256[] memory activePolicyIds = new uint256[](activeCount);
         uint256 index = 0;
-        for (uint256 i = 1; i <= policyCount; i++) {
+        for (uint256 i = 0; i <= policyCount; i++) {
             if (policies[i].isActive) {
                 activePolicyIds[index] = i;
                 index++;
@@ -164,7 +165,7 @@ contract AdminInsurancePolicy {
     // New function to fetch all archived policies (inactive)
     function getAllArchivedPolicies() public view returns (uint256[] memory) {
         uint256 archivedCount = 0;
-        for (uint256 i = 1; i <= policyCount; i++) {
+        for (uint256 i = 0; i <= policyCount; i++) {
             if (!policies[i].isActive) {
                 archivedCount++;
             }
@@ -172,7 +173,7 @@ contract AdminInsurancePolicy {
 
         uint256[] memory archivedPolicyIds = new uint256[](archivedCount);
         uint256 index = 0;
-        for (uint256 i = 1; i <= policyCount; i++) {
+        for (uint256 i = 0; i <= policyCount; i++) {
             if (!policies[i].isActive) {
                 archivedPolicyIds[index] = i;
                 index++;
