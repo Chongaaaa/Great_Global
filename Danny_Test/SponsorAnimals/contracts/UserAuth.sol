@@ -220,4 +220,10 @@ contract UserAuth {
     function getRegisteredUserEmails() public view returns (string[] memory) {
         return (registeredUserEmails);
     }
+
+    function getUserRefundAddress(
+        string memory _user
+    ) public view returns (address) {
+        return (users[_user].refundAddress);
+    }
 }
