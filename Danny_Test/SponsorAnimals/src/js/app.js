@@ -114,7 +114,7 @@ App = {
     // - Admin
     $(document).on("click", "#approveSubscriptionBtn", App.handleApproveSubscription);
     $(document).on("click", "#viewAllSubscriptionsBtn", App.handleViewAllSubscriptions);
-    
+
     // - User 
     $(document).on("click", "#subscribePackageBtn", App.handleSubscribeToPackage);
     $(document).on("click", "#viewPackagesBtn", App.handleViewPackages);
@@ -408,7 +408,7 @@ App = {
     if (!refundAddress || refundAddress.trim() === "") {
       alert("Please enter a valid Ethereum address.");
       return;
-  }
+    }
 
     if (!age || isNaN(age)) {
       alert("Please enter a valid age.");
@@ -527,8 +527,8 @@ App = {
     });
   },
 
-   // Logout User or Admin based on their current session
-   handleLogout: async function (event) {
+  // Logout User or Admin based on their current session
+  handleLogout: async function (event) {
     event.preventDefault();
 
     const instance = await App.contracts.UserAuth.deployed();
@@ -547,7 +547,7 @@ App = {
         }
 
         // Redirect to homepage after logging out
-        window.location.href = "index.html"; 
+        window.location.href = "index.html";
       } catch (err) {
         console.error(err.message);
         alert("Failed to log out.");
@@ -650,7 +650,7 @@ App = {
 
       try {
         const newDate = await instance.chkInsurancePayDate(customerAddress, insuranceSubscriptionID, { from: account });
-        const dateFormatted = new Date(newDate  * 1000).toDateString();
+        const dateFormatted = new Date(newDate * 1000).toDateString();
         $("#payDateResult").text(`Next pay date for this insurance is ${dateFormatted}`);
       } catch (err) {
         console.error(err.message);
@@ -674,7 +674,7 @@ App = {
 
       try {
         // Call with correct arguments
-        await instance.approveInsurance(customerAddress, insuranceID, payAmount, payDate, { from: account });
+        await instance.approveInsurance(customerAddress, insuranceID, payAmount * 1e18, payDate, { from: account });
         alert("Insurance approved successfully.");
       } catch (err) {
         console.error(err.message);
@@ -732,7 +732,7 @@ App = {
 
       try {
         const balance = await instance.getCustomerBalance({ from: account });
-        const displayBalance = balance && balance.toString() !== "0" ? (balance/1e18).toString() : "0";
+        const displayBalance = balance && balance.toString() !== "0" ? (balance / 1e18).toString() : "0";
         $("#customerBalanceDisplay").text(`Your balance is: ${displayBalance} ETH`);
       } catch (err) {
         console.error(err.message);
@@ -832,7 +832,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.manualPay(insuranceSubscriptionID, {from: account});
+        await instance.manualPay(insuranceSubscriptionID, { from: account });
 
         alert("Manual payment completed successfully.");
       } catch (err) {
@@ -862,7 +862,7 @@ App = {
       }
     });
   },
-  
+
   //Policy
   handleCreatePolicy: async function (event) {
     event.preventDefault();
@@ -884,7 +884,7 @@ App = {
       return;
     }
 
-    if (premium < 0 ) {
+    if (premium < 0) {
       alert("Premium must be greater than 0");
       return;
     }
@@ -915,7 +915,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.createPolicy(policyName,premium,amount,agelimit,active, { from: account });
+        await instance.createPolicy(policyName, premium, amount, agelimit, active, { from: account });
         alert("Create policy successfully!");
       } catch (err) {
         console.error(err.message);
@@ -948,7 +948,7 @@ App = {
       return;
     }
 
-    if (premium < 0 ) {
+    if (premium < 0) {
       alert("Premium must be greater than 0");
       return;
     }
@@ -979,7 +979,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.updatePolicy(policyId,policyName,premium,amount,agelimit,active, { from: account });
+        await instance.updatePolicy(policyId, policyName, premium, amount, agelimit, active, { from: account });
         alert("Update policy successfully!");
       } catch (err) {
         console.error(err.message);
@@ -994,25 +994,25 @@ App = {
     const instance = await App.contracts.AdminInsurancePolicy.deployed();
 
     try {
-        const archivedPolicyIds = await instance.getAllArchivedPolicies.call();
+      const archivedPolicyIds = await instance.getAllArchivedPolicies.call();
 
-        const policyDetailsDiv = document.getElementById("policyDetails");
-        policyDetailsDiv.innerHTML = ""; // Clear any previous content
+      const policyDetailsDiv = document.getElementById("policyDetails");
+      policyDetailsDiv.innerHTML = ""; // Clear any previous content
 
-        // Loop through the archived policies and display them
-        for (let i = 0; i < archivedPolicyIds.length; i++) {
-            const policyId = archivedPolicyIds[i].toNumber();
+      // Loop through the archived policies and display them
+      for (let i = 0; i < archivedPolicyIds.length; i++) {
+        const policyId = archivedPolicyIds[i].toNumber();
 
-            // Fetch the policy details
-            const policy = await instance.getPolicy.call(policyId);
-            const policyName = policy[0];
-            const premium = policy[1].toString();
-            const coverageAmount = policy[2].toString();
-            const ageLimit = policy[3].toString();
-            const isActive = policy[4];
+        // Fetch the policy details
+        const policy = await instance.getPolicy.call(policyId);
+        const policyName = policy[0];
+        const premium = policy[1].toString();
+        const coverageAmount = policy[2].toString();
+        const ageLimit = policy[3].toString();
+        const isActive = policy[4];
 
-            // Append the policy details to the UI
-            policyDetailsDiv.innerHTML += `
+        // Append the policy details to the UI
+        policyDetailsDiv.innerHTML += `
                 <div>
                     <h4>Policy ID: ${policyId}</h4>
                     <p><strong>Name:</strong> ${policyName}</p>
@@ -1022,17 +1022,17 @@ App = {
                     <p><strong>Active:</strong> ${isActive ? "Yes" : "No"}</p>
                     <hr>
                 </div>`;
-        }
+      }
 
-        if (archivedPolicyIds.length === 0) {
-            policyDetailsDiv.innerHTML = "<p>No archived policies available.</p>";
-        }
+      if (archivedPolicyIds.length === 0) {
+        policyDetailsDiv.innerHTML = "<p>No archived policies available.</p>";
+      }
 
     } catch (err) {
-        console.error(err.message);
-        alert("Failed to fetch archived policies.");
+      console.error(err.message);
+      alert("Failed to fetch archived policies.");
     }
-},
+  },
 
   handleViewPolicy: async function (event) {
     event.preventDefault();
@@ -1040,25 +1040,25 @@ App = {
     const instance = await App.contracts.AdminInsurancePolicy.deployed();
 
     try {
-        const activePolicyIds = await instance.getAllActivePolicies.call();
+      const activePolicyIds = await instance.getAllActivePolicies.call();
 
-        const policyDetailsDiv = document.getElementById("policyDetails2");
-        policyDetailsDiv.innerHTML = ""; // Clear any previous content
+      const policyDetailsDiv = document.getElementById("policyDetails2");
+      policyDetailsDiv.innerHTML = ""; // Clear any previous content
 
-        // Loop through the active policies and display them
-        for (let i = 0; i < activePolicyIds.length; i++) {
-            const policyId = activePolicyIds[i].toNumber();
+      // Loop through the active policies and display them
+      for (let i = 0; i < activePolicyIds.length; i++) {
+        const policyId = activePolicyIds[i].toNumber();
 
-            // Fetch the policy details
-            const policy = await instance.getPolicy.call(policyId);
-            const policyName = policy[0];
-            const premium = policy[1].toString();
-            const coverageAmount = policy[2].toString();
-            const ageLimit = policy[3].toString();
-            const isActive = policy[4];
+        // Fetch the policy details
+        const policy = await instance.getPolicy.call(policyId);
+        const policyName = policy[0];
+        const premium = policy[1].toString();
+        const coverageAmount = policy[2].toString();
+        const ageLimit = policy[3].toString();
+        const isActive = policy[4];
 
-            // Append the policy details to the UI
-            policyDetailsDiv.innerHTML += `
+        // Append the policy details to the UI
+        policyDetailsDiv.innerHTML += `
                 <div>
                     <h4>Policy ID: ${policyId}</h4>
                     <p><strong>Name:</strong> ${policyName}</p>
@@ -1068,90 +1068,90 @@ App = {
                     <p><strong>Active:</strong> ${isActive ? "Yes" : "No"}</p>
                     <hr>
                 </div>`;
-        }
+      }
 
-        if (activePolicyIds.length === 0) {
-            policyDetailsDiv.innerHTML = "<p>No active policies available.</p>";
-        }
+      if (activePolicyIds.length === 0) {
+        policyDetailsDiv.innerHTML = "<p>No active policies available.</p>";
+      }
 
     } catch (err) {
+      console.error(err.message);
+      alert("Failed to fetch policies.");
+    }
+  },
+  // Purchase Package
+  // Handle user subscribing to a package
+  handleSubscribeToPackage: async function (event) {
+    event.preventDefault();
+
+    const packageId = $("#packageId").val();
+    const instance = await App.contracts.PurchasePackage.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.subscribeToPackage(packageId, { from: account });
+        alert("Subscription request sent successfully.");
+      } catch (err) {
         console.error(err.message);
-        alert("Failed to fetch policies.");
-    }
-},
-// Purchase Package
-// Handle user subscribing to a package
-handleSubscribeToPackage: async function (event) {
-  event.preventDefault();
-  
-  const packageId = $("#packageId").val();
-  const instance = await App.contracts.PurchasePackage.deployed();
-  
-  web3.eth.getAccounts(async function (error, accounts) {
-    if (error) console.error(error);
-    const account = accounts[0];
-    
+        alert("Failed to subscribe to the package.");
+      }
+    });
+  },
+
+  // Handle admin approving a subscription
+  handleApproveSubscription: async function (event) {
+    event.preventDefault();
+
+    const userEmail = $("#userEmail").val();
+    const packageId = $("#approvePackageId").val();
+    const instance = await App.contracts.PurchasePackage.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        await instance.approveSubscription(userEmail, packageId, { from: account });
+        alert("Subscription approved successfully.");
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to approve subscription.");
+      }
+    });
+  },
+
+  // Handle viewing the user's packages
+  handleViewPackages: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.PurchasePackage.deployed();
+
     try {
-      await instance.subscribeToPackage(packageId, { from: account });
-      alert("Subscription request sent successfully.");
+      const [approvedPackages, cancelledPackages, pendingPackages] = await instance.viewPackages();
+      App.displayPackages(approvedPackages, cancelledPackages, pendingPackages);
     } catch (err) {
       console.error(err.message);
-      alert("Failed to subscribe to the package.");
+      alert("Failed to view packages.");
     }
-  });
-},
+  },
 
-// Handle admin approving a subscription
-handleApproveSubscription: async function (event) {
-  event.preventDefault();
-  
-  const userEmail = $("#userEmail").val();
-  const packageId = $("#approvePackageId").val();
-  const instance = await App.contracts.PurchasePackage.deployed();
-  
-  web3.eth.getAccounts(async function (error, accounts) {
-    if (error) console.error(error);
-    const account = accounts[0];
-    
+  // Handle admin viewing all subscriptions
+  handleViewAllSubscriptions: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.PurchasePackage.deployed();
+
     try {
-      await instance.approveSubscription(userEmail, packageId, { from: account });
-      alert("Subscription approved successfully.");
+      const [approvedPackages, cancelledPackages, pendingPackages] = await instance.viewAllSubscriptions();
+      App.displayPackages(approvedPackages, cancelledPackages, pendingPackages);
     } catch (err) {
       console.error(err.message);
-      alert("Failed to approve subscription.");
+      alert("Failed to view all subscriptions.");
     }
-  });
-},
-
-// Handle viewing the user's packages
-handleViewPackages: async function (event) {
-  event.preventDefault();
-  
-  const instance = await App.contracts.PurchasePackage.deployed();
-  
-  try {
-    const [approvedPackages, cancelledPackages, pendingPackages] = await instance.viewPackages();
-    App.displayPackages(approvedPackages, cancelledPackages, pendingPackages);
-  } catch (err) {
-    console.error(err.message);
-    alert("Failed to view packages.");
-  }
-},
-
-// Handle admin viewing all subscriptions
-handleViewAllSubscriptions: async function (event) {
-  event.preventDefault();
-  
-  const instance = await App.contracts.PurchasePackage.deployed();
-  
-  try {
-    const [approvedPackages, cancelledPackages, pendingPackages] = await instance.viewAllSubscriptions();
-    App.displayPackages(approvedPackages, cancelledPackages, pendingPackages);
-  } catch (err) {
-    console.error(err.message);
-    alert("Failed to view all subscriptions.");
-  }
-},
+  },
 };
 
 $(function () {
