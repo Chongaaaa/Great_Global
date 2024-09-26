@@ -8,6 +8,19 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/payment.css">
     <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        input,
+        button {
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+    </style>
 </head>
 
 <body>
@@ -30,7 +43,54 @@
     </header>
 
     <main>
+        <h1>Admin Insurance Policy DApp</h1>
+
+        <!-- Form to create a new policy -->
+        <h3>Create New Policy</h3>
+        <div id="createPolicyForm">
+            <input type="text" id="policyName" placeholder="Policy Name" required><br>
+            <input type="number" id="premium" placeholder="Premium" required><br>
+            <input type="number" id="coverageAmount" placeholder="Coverage Amount" required><br>
+            <input type="number" id="ageLimit" placeholder="Age Limit" required><br>
+            <select id="isActive">
+                <option value="true">Active</option>
+                <option value="false">Archived</option>
+            </select><br>
+            <button id="CreatePolicyBtn">Create Policy</button>
+        </div>
         
+        <!-- Form to update a policy -->
+        <h3>Update Policy</h3>
+        <div id="updatePolicyForm">
+            <input type="number" id="updatePolicyId" placeholder="Policy ID" required><br>
+            <input type="text" id="updatePolicyName" placeholder="Policy Name"><br>
+            <input type="number" id="updatePremium" placeholder="Premium"><br>
+            <input type="number" id="updateCoverageAmount" placeholder="Coverage Amount"><br>
+            <input type="number" id="updateAgeLimit" placeholder="Age Limit"><br>
+            <select id="updateIsActive">
+                <option value="true">Active</option>
+                <option value="false">Archived</option>
+            </select><br>
+            <button id="UpdatePolicyBtn">Update Policy</button>
+        </div>
+
+        <!-- Button to archive a policy -->
+        <h3>Archive Policy</h3>
+        <form id="archivePolicyForm">
+            <button id="ArchievePolicyBtn">Archive Policy</button>
+        </form>
+        <div id="policyDetails"></div>
+        <!-- Policy details will be shown here -->
+        </div>
+
+        <!-- Section to display the policy details -->
+        <h3>View Policy</h3>
+        <form id="viewPolicyForm">
+            <button id="ViewPolicyBtn">View Policy</button>
+        </form>
+        <div id="policyDetails2">
+            <!-- Policy details will be shown here -->
+        </div>
     </main>
 
     <footer>

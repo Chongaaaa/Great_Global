@@ -855,7 +855,7 @@ App = {
       try {
         const [payAmt, payDate] = await instance.chkManualPayInsurance(insuranceSubscriptionID, { from: account });
         const dateFormatted = new Date(payDate * 1000).toDateString();
-        $("#manualPayResult").text(`You need to pay ${payAmt} ETH on ${dateFormatted}`);
+        $("#manualPayResult").text(`You need to pay ${payAmt / 1e18} ETH on ${dateFormatted}`);
       } catch (err) {
         console.error(err.message);
         alert("Only Customer can view.");
