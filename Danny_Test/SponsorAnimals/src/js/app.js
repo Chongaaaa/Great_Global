@@ -57,6 +57,12 @@ App = {
       App.contracts.ClaimProcessing.setProvider(App.web3Provider);
     });
 
+    $.getJSON("PurchasePackage.json", function (data) {
+      var PurchasePackageArtifact = data;
+      App.contracts.PurchasePackage = TruffleContract(PurchasePackageArtifact);
+      App.contracts.PurchasePackage.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 
