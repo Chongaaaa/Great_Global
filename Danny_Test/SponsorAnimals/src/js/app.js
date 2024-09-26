@@ -379,7 +379,7 @@ App = {
       const account = accounts[0];
 
       try {
-        const balance = await instance.getBalance()({ from: account });
+        const balance = await instance.getBalance();
         const displayBalance = balance && balance.toString() !== "0" ? (balance / 1e18).toString() : "0";
         $("#contractBalance").text(`Contract balance is: ${displayBalance} ETH`);
       } catch (err) {
