@@ -28,27 +28,30 @@ contract("AdminInsurancePolicy", (accounts) => {
         await adminInsurancePolicy.createPolicy(policyName, premium, coverageAmount, ageLimit, isActive, { from: adminAccount });
 
         // Fetch the policy details
-        const policy = await adminInsurancePolicy.getPolicy(1);
+        const policy = await adminInsurancePolicy.getPolicy(0); // Note: Changed to 0 as policies likely start from index 0
         
+        // Log policy details for debugging
+        console.log("Retrieved policy:", policy);
+
         // Assertions to check if the policy was created correctly
         assert.equal(policy[0], policyName, "Policy name should match");
-        assert.equal(policy[1], premium, "Premium should match");
-        assert.equal(policy[2], coverageAmount, "Coverage amount should match");
+        assert.equal(policy[1].toString(), premium.toString(), "Premium should match");
+        assert.equal(policy[2].toString(), coverageAmount.toString(), "Coverage amount should match");
         assert.equal(policy[3].toString(), ageLimit.toString(), "Age limit should match");
         assert.equal(policy[4], isActive, "Policy should be active");
 
         // Check if it's active via availability function
-        const isPolicyActive = await adminInsurancePolicy.getPolicyAvailibility(1);
+        const isPolicyActive = await adminInsurancePolicy.getPolicyAvailibility(0);
         assert.equal(isPolicyActive, true, "Policy should be active");
     });
 
     it("should update the existing policy details", async () => {
-        const policyId = 0; // Assuming this is the policy ID we just created
-        const newPolicyName = "Supreme Health Insurance";
-        const newPremium = web3.utils.toWei("1.5", "ether"); // Updated premium
-        const newCoverageAmount = web3.utils.toWei("15", "ether"); // Updated coverage amount
-        const newAgeLimit = 65; // Updated age limit
-        const newIsActive = true; // Still active
+        const policyId = 0; // First policy has index 0
+        const newPolicyName = "Updated Health Insurance";
+        const newPremium = web3.utils.toWei("1.5", "ether");
+        const newCoverageAmount = web3.utils.toWei("15", "ether");
+        const newAgeLimit = 65;
+        const newIsActive = true;
 
         // Update the existing policy
         await adminInsurancePolicy.updatePolicy(policyId, newPolicyName, newPremium, newCoverageAmount, newAgeLimit, newIsActive, { from: adminAccount });
@@ -56,10 +59,13 @@ contract("AdminInsurancePolicy", (accounts) => {
         // Fetch the updated policy details
         const updatedPolicy = await adminInsurancePolicy.getPolicy(policyId);
 
+        // Log updated policy details for debugging
+        console.log("Updated policy:", updatedPolicy);
+
         // Assertions to check if the policy was updated correctly
         assert.equal(updatedPolicy[0], newPolicyName, "Updated policy name should match");
-        assert.equal(updatedPolicy[1], newPremium, "Updated premium should match");
-        assert.equal(updatedPolicy[2], newCoverageAmount, "Updated coverage amount should match");
+        assert.equal(updatedPolicy[1].toString(), newPremium.toString(), "Updated premium should match");
+        assert.equal(updatedPolicy[2].toString(), newCoverageAmount.toString(), "Updated coverage amount should match");
         assert.equal(updatedPolicy[3].toString(), newAgeLimit.toString(), "Updated age limit should match");
         assert.equal(updatedPolicy[4], newIsActive, "Updated policy should be active");
     });
