@@ -6,7 +6,7 @@ contract UserAuth {
         string name;
         string email;
         address refundAddress;
-        uint age;
+        uint8 age;
         bytes32 hashedPassword;
         bool isRegistered;
         uint256[] subscribedPackages;
@@ -27,7 +27,7 @@ contract UserAuth {
         address indexed userAddress,
         string _name,
         string email,
-        uint _age
+        uint8 _age
     );
     event PasswordReset(
         address indexed userAddress,
@@ -70,9 +70,10 @@ contract UserAuth {
     function register(
         string memory _name,
         string memory _email,
-        uint _age,
-        string memory _password,
-        address _refundAddress
+        address _refundAddress,
+        uint8 _age,
+        string memory _password
+
     ) public {
         bool validEmail = true;
         for (uint i = 0; i < registeredUserEmails.length; i++) {
@@ -204,7 +205,7 @@ contract UserAuth {
         return adminAddresses;
     }
 
-    function getUserAge() public view returns (uint) {
+    function getUserAge() public view returns (uint8) {
         require(users[currentUser].isRegistered, "User not registered");
         return users[currentUser].age;
     }

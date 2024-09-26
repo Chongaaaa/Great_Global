@@ -409,9 +409,10 @@ App = {
     const name = $("#signupName").val();
     const email = $("#signupEmail").val();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const refundAddress = $("#signupRefundAddress").val();
     const age = $("#signupAge").val();
     const password = $("#signupPassword").val();
-    const refundAddress = $("#signupRefundAddress").val();
+  
 
     // Simple Validation Rules
     if (!name || name.trim() === "") {
@@ -1118,14 +1119,19 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.subscribeToPackage(packageId, { from: account });
+        // Wait for the transaction to be mined
+        const result = await instance.subscribeToPackage(packageId, { from: account });
+        console.log(result); // Log the result for debugging
+
+        // Show success alert after the transaction is confirmed
         alert("Subscription request sent successfully.");
       } catch (err) {
         console.error(err.message);
         alert("Failed to subscribe to the package.");
       }
     });
-  },
+},
+
 
   // Handle admin approving a subscription
   handleApproveSubscription: async function (event) {
