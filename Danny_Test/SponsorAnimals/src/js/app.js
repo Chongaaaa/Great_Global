@@ -395,6 +395,12 @@ App = {
       return;
     }
 
+    // Add validation for Ethereum address
+    if (!refundAddress || refundAddress.trim() === "") {
+      alert("Please enter a valid Ethereum address.");
+      return;
+  }
+
     if (!age || isNaN(age)) {
       alert("Please enter a valid age.");
       return;
@@ -413,12 +419,6 @@ App = {
       alert("Password must be at least 6 characters long.");
       return;
     }
-    
-    // Add validation for Ethereum address
-    if (!web3.utils.isAddress(refundAddress)) {
-      alert("Please enter a valid Ethereum address.");
-      return;
-  }
 
     const instance = await App.contracts.UserAuth.deployed();
 
@@ -427,7 +427,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.register(name, email, age, password, refundAddress, { from: account });
+        await instance.register(name, email, refundAddress, age, password, { from: account });
         alert("User registered successfully!");
         window.location.href = "UserHomePage.html";
       } catch (err) {
