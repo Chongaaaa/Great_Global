@@ -832,7 +832,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.manualPay(insuranceSubscriptionID, { from: account});
+        await instance.manualPay(insuranceSubscriptionID, {from: account});
 
         alert("Manual payment completed successfully.");
       } catch (err) {

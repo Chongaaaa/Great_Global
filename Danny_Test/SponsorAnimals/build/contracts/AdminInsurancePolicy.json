@@ -15929,12 +15929,22 @@
     "5777": {
       "events": {},
       "links": {},
+<<<<<<< HEAD
       "address": "0x89e74DDc04907D4cF01BE5FA317Bb176FA5D67d3",
       "transactionHash": "0x23c10b0f92a6834bffcdf20ec93ec9f293ec47753801df5e006f886cf44b1d47"
     }
   },
   "schemaVersion": "3.4.16",
   "updatedAt": "2024-09-26T02:51:01.161Z",
+=======
+      "address": "0x20a32528A1efF4141b77c62368dfFde99754f26B",
+      "transactionHash": "0x9dec8f8141dfe4793e52d0634bd6f4b13122b7193fd6e53f243cbd6d13839c1d"
+    }
+  },
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-09-26T01:16:08.832Z",
+  "networkType": "ethereum",
+>>>>>>> bd80fb5414395a07c35c609f43eaa3f7817cc0b8
   "devdoc": {
     "kind": "dev",
     "methods": {},
