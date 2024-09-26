@@ -92,13 +92,17 @@ App = {
     $(document).on("click", "#withdrawMoneyBtn", App.handleWithdrawMoney);
     $(document).on("click", "#pAddAdminBtn", App.handlePAddAdmin);
     $(document).on("click", "#updatePayDateBtn", App.handleUpdatePayDate);
+    $(document).on("click", "#viewUpdatedPayDateBtn", App.handleViewUpdatePayDate);
     $(document).on("click", "#approveInsuranceBtn", App.handlePApproveInsurance);
     $(document).on("click", "#registerCustomerBtn", App.handlePRegisterCustomer);
     $(document).on("click", "#addBalanceBtn", App.handleAddBalance);
     $(document).on("click", "#getCustomerBalanceBtn", App.handleGetCustomerBalance);
     $(document).on("click", "#updateAutoPayBtn", App.handleUpdateAutoPay);
+    $(document).on("click", "#viewAutoPayStatusBtn", App.handleViewUpdateAutoPay);
     $(document).on("click", "#cancelInsuranceBtn", App.handleCancelInsurance);
+    $(document).on("click", "#viewCancelInsuranceStatusBtn", App.handleViewCancelInsurance);
     $(document).on("click", "#manualPayBtn", App.handleManualPayment);
+    $(document).on("click", "#viewManualPaymentResultBtn", App.handleViewManualPayment);
 
     // Policy
     $(document).on("click", "#CreatePolicyBtn", App.handleCreatePolicy);
@@ -554,7 +558,7 @@ App = {
 
       try {
         const money = await instance.viewTotalMoney({ from: account });
-        const displayMoney = money && money.toString() !== "0" ? money.toString() : "0";
+        const displayMoney = money && money.toString() !== "0" ? (money / 1e18).toString() : "0";
         $("#totalMoneyDisplay").text(`Total Ether in contract: ${displayMoney} ETH`);
       } catch (err) {
         console.error(err.message);
@@ -573,8 +577,8 @@ App = {
       const account = accounts[0];
 
       try {
-        const money = await instance.withdrawMoney(amount * 1e18, { from: account });
-        alert(`Successfully withdrew ${money} ETH.`);
+        await instance.withdrawMoney(amount * 1e18, { from: account });
+        alert(`Successfully withdrew ${amount} ETH.`);
       } catch (err) {
         console.error(err.message);
         alert("Withdrawal failed.");
@@ -607,7 +611,7 @@ App = {
 
     const customerAddress = $("#payDateCustomerAddress").val();
     const insuranceSubscriptionID = $("#payDateInsuranceID").val();
-    const newPayDate = $("#newPayDate").val();
+    const newPayDate = parseInt($("#newPayDate").val());
     const instance = await App.contracts.PaymentModule.deployed();
 
     web3.eth.getAccounts(async function (error, accounts) {
@@ -623,13 +627,35 @@ App = {
     });
   },
 
+  handleViewUpdatePayDate: async function (event) {
+    event.preventDefault();
+
+    const customerAddress = $("#payDateCustomerAddress").val();
+    const insuranceSubscriptionID = $("#payDateSubscriptionID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const newDate = await instance.chkInsurancePayDate(customerAddress, insuranceSubscriptionID, { from: account });
+        const dateFormatted = new Date(newDate).toDateString();
+        $("#payDateResult").text(`Next pay date for this insurance is ${dateFormatted}`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Only Manager or Admin can view.");
+      }
+    });
+  },
+
   handlePApproveInsurance: async function (event) {
     event.preventDefault();
 
     const customerAddress = $("#approveInsuranceCustomerAddress").val();
     const insuranceID = $("#pInsuranceID").val();
     const payAmount = Math.max(0, parseInt($("#pPayAmount").val(), 10));
-    const payDate = Math.floor(new Date($("#pPayDate").val()).getTime() / 1000); // Convert to seconds
+    const payDate = parseInt($("#pPayDate").val());
     const instance = await App.contracts.PaymentModule.deployed();
 
     web3.eth.getAccounts(async function (error, accounts) {
@@ -696,7 +722,7 @@ App = {
 
       try {
         const balance = await instance.getCustomerBalance({ from: account });
-        const displayBalance = balance && balance.toString() !== "0" ? balance.toString() : "0";
+        const displayBalance = balance && balance.toString() !== "0" ? (balance / 1e18).toString() : "0";
         $("#customerBalanceDisplay").text(`Your balance is: ${displayBalance} ETH`);
       } catch (err) {
         console.error(err.message);
@@ -725,6 +751,26 @@ App = {
     });
   },
 
+  handleViewUpdateAutoPay: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#autoPayInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const autoPay = await instance.chkAutoPayStatus(insuranceSubscriptionID, { from: account });
+        $("#autoPayResult").text(`Your auto pay status for this policy is currently ${autoPay}`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Only Customer can view.");
+      }
+    });
+  },
+
   handleCancelInsurance: async function (event) {
     event.preventDefault();
 
@@ -741,6 +787,26 @@ App = {
       } catch (err) {
         console.error(err.message);
         alert("Failed to cancel insurance");
+      }
+    });
+  },
+
+  handleViewCancelInsurance: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#cancelInsuranceID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const insStatus = await instance.chkCancelInsuranceStatus(insuranceSubscriptionID, { from: account });
+        $("#cancelInsuranceStatusResult").text(`Your policy is currently ${insStatus}`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Only Customer can view.");
       }
     });
   },
@@ -763,13 +829,35 @@ App = {
         const nextPayDateTimestamp = insuranceSubscription.payDate.toString();
 
         // Convert the Unix timestamp to a readable date
-        const nextPayDate = new Date(nextPayDateTimestamp * 1000).toLocaleDateString();
-        $("#nextPayDateDisplay").html(`Your next payment is due on: <strong>${nextPayDate}</strong>`);
+        const nextPayDate = new Date(nextPayDateTimestamp).toDateString();
+        $("#nextPayDateDisplay").text(`Your next payment is due on: <strong>${nextPayDate}</strong>`);
 
         alert("Manual payment completed successfully.");
       } catch (err) {
         console.error(err.message);
         alert("Payment failed");
+      }
+    });
+  },
+
+  handleViewManualPayment: async function (event) {
+    event.preventDefault();
+
+    const insuranceSubscriptionID = $("#manualPaySubscriptionID").val();
+    const instance = await App.contracts.PaymentModule.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const [payAmt, payDate] = await instance.chkManualPayInsurance(insuranceSubscriptionID, { from: account });
+        const ethAmt = payAmt / 1e18;
+        const dateFormatted = new Date(payDate).toDateString();
+        $("#manualPayResult").text(`You need to pay ${ethAmt} ETH on ${dateFormatted}`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Only Customer can view.");
       }
     });
   },
