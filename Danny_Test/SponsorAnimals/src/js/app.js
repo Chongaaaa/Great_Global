@@ -33,12 +33,6 @@ App = {
   },
 
   initContract: function () {
-    $.getJSON("ClaimProcessing.json", function (data) {
-      var ClaimProcessingArtifact = data;
-      App.contracts.ClaimProcessing = TruffleContract(ClaimProcessingArtifact);
-      App.contracts.ClaimProcessing.setProvider(App.web3Provider);
-    });
-
     $.getJSON("UserAuth.json", function (data) {
       var UserAuthArtifact = data;
       App.contracts.UserAuth = TruffleContract(UserAuthArtifact);
@@ -57,12 +51,17 @@ App = {
       App.contracts.AdminInsurancePolicy.setProvider(App.web3Provider);
     });
 
+    $.getJSON("ClaimProcessing.json", function (data) {
+      var ClaimProcessingArtifact = data;
+      App.contracts.ClaimProcessing = TruffleContract(ClaimProcessingArtifact);
+      App.contracts.ClaimProcessing.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 
   bindEvents: function () {
     // Claims Module
-    $(document).on("click", "#addUserBtn", App.handleAddUser);
     $(document).on("click", "#addClaimBtn", App.handleAddClaim);
     $(document).on("click", "#approveClaimBtn", App.handleApproveClaim);
     $(document).on("click", "#rejectClaimBtn", App.handleRejectClaim);
@@ -77,6 +76,7 @@ App = {
       App.handleViewAllUnprocessedClaims
     );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
+    $(document).on("click", "#viewFundsBtn", App.handleGetContractFunds);
 
     // User Module
     $(document).on("click", "#registerBtn", App.handleRegister);
@@ -371,6 +371,26 @@ App = {
         });
       } catch (err) {
         console.error(err.message);
+      }
+    });
+  },
+
+  handleGetContractFunds: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.ClaimProcessing.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const balance = await instance.getBalance()({ from: account });
+        const displayBalance = balance && balance.toString() !== "0" ? (balance / 1e18).toString() : "0";
+        $("#contractBalance").text(`Contract balance is: ${displayBalance} ETH`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to get customer balance");
       }
     });
   },
