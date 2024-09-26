@@ -51,6 +51,12 @@ App = {
       App.contracts.AdminInsurancePolicy.setProvider(App.web3Provider);
     });
 
+    $.getJSON("ClaimProcessing.json", function (data) {
+      var ClaimProcessingArtifact = data;
+      App.contracts.ClaimProcessing = TruffleContract(ClaimProcessingArtifact);
+      App.contracts.ClaimProcessing.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 

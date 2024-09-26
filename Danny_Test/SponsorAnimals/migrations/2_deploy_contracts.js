@@ -23,7 +23,7 @@ module.exports = async function (deployer) {
 
   // Deploy other contracts
   console.log("Deploying Claims...");
-  await deployer.deploy(Claims, userAuthInstance.address, adminInsuranceInstance.address);
+  await deployer.deploy(Claims, adminInsuranceInstance.address, userAuthInstance.address);
   console.log("Claims deployed.");
 
   console.log("Deploying PaymentModule...");
