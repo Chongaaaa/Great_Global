@@ -33,12 +33,6 @@ App = {
   },
 
   initContract: function () {
-    $.getJSON("ClaimProcessing.json", function (data) {
-      var ClaimProcessingArtifact = data;
-      App.contracts.ClaimProcessing = TruffleContract(ClaimProcessingArtifact);
-      App.contracts.ClaimProcessing.setProvider(App.web3Provider);
-    });
-
     $.getJSON("UserAuth.json", function (data) {
       var UserAuthArtifact = data;
       App.contracts.UserAuth = TruffleContract(UserAuthArtifact);
@@ -57,12 +51,23 @@ App = {
       App.contracts.AdminInsurancePolicy.setProvider(App.web3Provider);
     });
 
+    $.getJSON("ClaimProcessing.json", function (data) {
+      var ClaimProcessingArtifact = data;
+      App.contracts.ClaimProcessing = TruffleContract(ClaimProcessingArtifact);
+      App.contracts.ClaimProcessing.setProvider(App.web3Provider);
+    });
+
+    $.getJSON("PurchasePackage.json", function (data) {
+      var PurchasePackageArtifact = data;
+      App.contracts.PurchasePackage = TruffleContract(PurchasePackageArtifact);
+      App.contracts.PurchasePackage.setProvider(App.web3Provider);
+    });
+
     return App.bindEvents();
   },
 
   bindEvents: function () {
     // Claims Module
-    $(document).on("click", "#addUserBtn", App.handleAddUser);
     $(document).on("click", "#addClaimBtn", App.handleAddClaim);
     $(document).on("click", "#approveClaimBtn", App.handleApproveClaim);
     $(document).on("click", "#rejectClaimBtn", App.handleRejectClaim);
@@ -77,6 +82,7 @@ App = {
       App.handleViewAllUnprocessedClaims
     );
     $(document).on("click", "#sendFundsBtn", App.handleSendFunds);
+    $(document).on("click", "#viewFundsBtn", App.handleGetContractFunds);
 
     // User Module
     $(document).on("click", "#registerBtn", App.handleRegister);
@@ -371,6 +377,26 @@ App = {
         });
       } catch (err) {
         console.error(err.message);
+      }
+    });
+  },
+
+  handleGetContractFunds: async function (event) {
+    event.preventDefault();
+
+    const instance = await App.contracts.ClaimProcessing.deployed();
+
+    web3.eth.getAccounts(async function (error, accounts) {
+      if (error) console.error(error);
+      const account = accounts[0];
+
+      try {
+        const balance = await instance.getBalance();
+        const displayBalance = balance && balance.toString() !== "0" ? (balance / 1e18).toString() : "0";
+        $("#contractBalance").text(`Contract balance is: ${displayBalance} ETH`);
+      } catch (err) {
+        console.error(err.message);
+        alert("Failed to get customer balance");
       }
     });
   },
@@ -855,7 +881,7 @@ App = {
       try {
         const [payAmt, payDate] = await instance.chkManualPayInsurance(insuranceSubscriptionID, { from: account });
         const dateFormatted = new Date(payDate * 1000).toDateString();
-        $("#manualPayResult").text(`You need to pay ${payAmt} ETH on ${dateFormatted}`);
+        $("#manualPayResult").text(`You need to pay ${payAmt / 1e18} ETH on ${dateFormatted}`);
       } catch (err) {
         console.error(err.message);
         alert("Only Customer can view.");
@@ -1152,6 +1178,36 @@ App = {
       alert("Failed to view all subscriptions.");
     }
   },
+  // Display packages on the page
+  displayPackages: function (approvedPackages, cancelledPackages, pendingPackages) {
+    $("#approvedPackages").html("");
+    $("#cancelledPackages").html("");
+    $("#pendingPackages").html("");
+
+    if (approvedPackages.length === 0) {
+      $("#approvedPackages").append("<p>No approved packages found.</p>");
+    } else {
+      approvedPackages.forEach(function (pkg) {
+        $("#approvedPackages").append(`<p>Email: ${pkg.userEmail}, Package ID: ${pkg.packageID}</p>`);
+      });
+    }
+
+    if (cancelledPackages.length === 0) {
+      $("#cancelledPackages").append("<p>No cancelled packages found.</p>");
+    } else {
+      cancelledPackages.forEach(function (pkg) {
+        $("#cancelledPackages").append(`<p>Email: ${pkg.userEmail}, Package ID: ${pkg.packageID}</p>`);
+      });
+    }
+
+    if (pendingPackages.length === 0) {
+      $("#pendingPackages").append("<p>No pending packages found.</p>");
+    } else {
+      pendingPackages.forEach(function (pkg) {
+        $("#pendingPackages").append(`<p>Email: ${pkg.userEmail}, Package ID: ${pkg.packageID}</p>`);
+      });
+    }
+  }
 };
 
 $(function () {

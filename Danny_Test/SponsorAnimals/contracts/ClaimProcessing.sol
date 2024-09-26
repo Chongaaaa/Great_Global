@@ -1,119 +1,72 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./AdminInsurancePolicy.sol";
+import "./UserAuth.sol";
+
+// import "./PurchasePackage.sol";
+
 contract ClaimProcessing {
-    address public owner;
-    address[] public admins;
-    address[] public users;
+    AdminInsurancePolicy public adminContract;
+    UserAuth public userAuthContract;
+    //PurchasePackage public userPurchasePackageContract;
 
     struct Claim {
         uint256 amount;
         bool isProcessed;
     }
 
-    mapping(address => mapping(uint256 => Claim)) public claims;
-    mapping(address => uint256) public claimCount;
+    mapping(string => mapping(uint256 => Claim)) public claims;
+    mapping(string => uint256) public claimCount;
 
-    event ClaimAdded(address indexed user, uint256 claimId, uint256 amount);
+    event ClaimAdded(string user, uint256 claimId, uint256 amount);
 
     event ClaimProcessed(
-        address indexed user,
-        uint256 indexed claimId,
+        string user,
+        uint256 claimId,
         bool claimValid,
         uint256 amount
     );
 
-    event FundsAdded(address indexed admin, uint256 amount);
+    event FundsAdded(address admin, uint256 amount);
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can perform this action");
-        _;
+    //, address _userPurchasePackageAddress
+    constructor(address _adminPolicyAddress, address _userAuthAddress) {
+        adminContract = AdminInsurancePolicy(_adminPolicyAddress);
+        userAuthContract = UserAuth(_userAuthAddress);
+        //userPurchasePackageContract = PurchasePackage(_userPurchasePackageAddress);
     }
 
-    modifier onlyAdmins() {
-        bool isAdmin = false;
-        for (uint256 i = 0; i < admins.length; i++) {
-            if (msg.sender == admins[i]) {
-                isAdmin = true;
-                break;
-            }
-        }
+    modifier sameAdmin() {
         require(
-            isAdmin || msg.sender == owner,
-            "Only an admin or the owner can perform this action"
+            msg.sender == userAuthContract.getCurrentAdmin(),
+            "Metamask account and address used to sign in do not match."
         );
         _;
     }
 
-    modifier onlyUsers() {
-        bool isUser = false;
-        for (uint256 i = 0; i < users.length; i++) {
-            if (msg.sender == users[i]) {
-                isUser = true;
-                break;
-            }
-        }
-        require(isUser, "Only registered users can perform this action");
-        _;
-    }
-
-    constructor() payable {
-        owner = msg.sender;
-    }
-
-    function addAdmin(address _admin) public onlyOwner {
-        bool adminExists = false;
-        for (uint256 i = 0; i < admins.length; i++) {
-            if (_admin == admins[i]) {
-                adminExists = true;
-            }
-            require(!adminExists, "Admin already exists");
-        }
-        admins.push(_admin);
-    }
-
-    function removeAdmin(address _admin) public onlyOwner {
-        for (uint256 i = 0; i < admins.length; i++) {
-            if (admins[i] == _admin) {
-                admins[i] = admins[admins.length - 1];
-                admins.pop();
-                break;
-            }
-        }
-    }
-
-    function addUser(address _user) public onlyAdmins {
-        bool userExists = false;
-        for (uint256 i = 0; i < users.length; i++) {
-            if (_user == users[i]) {
-                userExists = true;
-            }
-            require(!userExists, "User already exists");
-        }
-        users.push(_user);
-    }
-
-    function addClaim(uint256 amount) public onlyUsers {
-        address user = msg.sender;
+    function addClaim(uint256 amount) public {
+        string memory user = userAuthContract.getCurrentUser();
         uint256 claimId = claimCount[user];
-        amount = amount; // convert eth to wei
         claims[user][claimId] = Claim(amount, false);
         claimCount[user]++;
-        emit ClaimAdded(msg.sender, claimId, amount);
+        emit ClaimAdded(user, claimId, amount);
     }
 
     function approveClaim(
-        address user,
+        string memory user,
         uint256 claimId,
         bool claimValid
-    ) public onlyAdmins {
+    ) public sameAdmin {
         require(claimId < claimCount[user], "Claim does not exist.");
         require(!claims[user][claimId].isProcessed, "Claim already processed.");
 
         uint256 amount = claims[user][claimId].amount;
 
+        address refundAddress = userAuthContract.getUserRefundAddress(user);
+
         if (claimValid) {
-            (bool success, ) = user.call{value: amount}("");
+            (bool success, ) = refundAddress.call{value: amount}("");
             require(success, "Refund transfer failed.");
         }
 
@@ -123,8 +76,8 @@ contract ClaimProcessing {
 
     // Function to get all unprocessed claims for a specific user
     function getUnprocessedClaims(
-        address user
-    ) public view returns (uint256[] memory, uint256[] memory) {
+        string memory user
+    ) public view sameAdmin returns (uint256[] memory, uint256[] memory) {
         uint256 unprocessedCount = 0;
         uint256 totalClaims = claimCount[user];
 
@@ -153,13 +106,15 @@ contract ClaimProcessing {
     function getAllUnprocessedClaims()
         public
         view
-        onlyAdmins
-        returns (address[] memory, uint256[] memory, uint256[] memory)
+        sameAdmin
+        returns (string[] memory, uint256[] memory, uint256[] memory)
     {
         uint256 totalUnprocessed = 0;
 
+        string[] memory users = userAuthContract.getRegisteredUserEmails();
+
         for (uint256 j = 0; j < users.length; j++) {
-            address user = users[j];
+            string memory user = users[j];
             uint256 totalClaims = claimCount[user];
 
             for (uint256 i = 0; i < totalClaims; i++) {
@@ -169,13 +124,13 @@ contract ClaimProcessing {
             }
         }
 
-        address[] memory userAddresses = new address[](totalUnprocessed);
+        string[] memory userAddresses = new string[](totalUnprocessed);
         uint256[] memory claimIds = new uint256[](totalUnprocessed);
         uint256[] memory claimAmount = new uint256[](totalUnprocessed);
         uint256 index = 0;
 
         for (uint256 j = 0; j < users.length; j++) {
-            address user = users[j];
+            string memory user = users[j];
             uint256 totalClaims = claimCount[user];
 
             for (uint256 i = 0; i < totalClaims; i++) {
@@ -191,7 +146,7 @@ contract ClaimProcessing {
         return (userAddresses, claimIds, claimAmount);
     }
 
-    function fund() public payable onlyAdmins {
+    function fund() public payable sameAdmin {
         require(msg.value > 0, "Amount must be greater than 0.");
         emit FundsAdded(msg.sender, msg.value);
     }
@@ -200,7 +155,7 @@ contract ClaimProcessing {
 
     fallback() external payable {}
 
-    function getBalance() public view returns (uint) {
+    function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
 }
