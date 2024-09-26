@@ -38,7 +38,7 @@ contract AdminInsurancePolicy {
         bool isActive
     );
     event PolicyArchived(uint256 policyId);
-    
+
     modifier sameAdmin() {
         require(
             msg.sender == userAuthContract.getCurrentAdmin(),
@@ -64,10 +64,9 @@ contract AdminInsurancePolicy {
         admin = msg.sender; // Initially, the deployer is the admin
         userAuthContract = UserAuth(_userAuthAddress);
     }
-    
 
     // Function to create a new policy with input validation
-    function createPolicy (
+    function createPolicy(
         string memory _name,
         uint256 _premium,
         uint256 _coverageAmount,
@@ -80,8 +79,21 @@ contract AdminInsurancePolicy {
         require(_ageLimit >= 0, "Age limit must be positive");
 
         policyCount++;
-        policies[policyCount] = Policy(_name, _premium, _coverageAmount, _ageLimit, _isActive);
-        emit PolicyCreated(policyCount, _name, _premium, _coverageAmount, _ageLimit, _isActive);
+        policies[policyCount] = Policy(
+            _name,
+            _premium,
+            _coverageAmount,
+            _ageLimit,
+            _isActive
+        );
+        emit PolicyCreated(
+            policyCount,
+            _name,
+            _premium,
+            _coverageAmount,
+            _ageLimit,
+            _isActive
+        );
     }
 
     // Function to update an existing policy's details with validation
@@ -105,17 +117,28 @@ contract AdminInsurancePolicy {
         policy.ageLimit = _ageLimit;
         policy.isActive = _isActive;
 
-        emit PolicyUpdated(_policyId, _name, _premium, _coverageAmount, _ageLimit, _isActive);
+        emit PolicyUpdated(
+            _policyId,
+            _name,
+            _premium,
+            _coverageAmount,
+            _ageLimit,
+            _isActive
+        );
     }
 
     // Function to fetch a policy by its ID
-    function getPolicy(uint256 _policyId)
-        public
-        view
-        returns (string memory, uint256, uint256, uint256, bool)
-    {
+    function getPolicy(
+        uint256 _policyId
+    ) public view returns (string memory, uint256, uint256, uint256, bool) {
         Policy storage policy = policies[_policyId];
-        return (policy.name, policy.premium, policy.coverageAmount, policy.ageLimit, policy.isActive);
+        return (
+            policy.name,
+            policy.premium,
+            policy.coverageAmount,
+            policy.ageLimit,
+            policy.isActive
+        );
     }
 
     // New function to fetch all active policies
@@ -138,7 +161,7 @@ contract AdminInsurancePolicy {
         return activePolicyIds;
     }
 
-     // New function to fetch all archived policies (inactive)
+    // New function to fetch all archived policies (inactive)
     function getAllArchivedPolicies() public view returns (uint256[] memory) {
         uint256 archivedCount = 0;
         for (uint256 i = 1; i <= policyCount; i++) {
@@ -156,5 +179,12 @@ contract AdminInsurancePolicy {
             }
         }
         return archivedPolicyIds;
+    }
+
+    function getPolicyAvailibility(
+        uint256 _policyId
+    ) public view returns (bool isActive) {
+        Policy memory policy = policies[_policyId];
+        return policy.isActive;
     }
 }

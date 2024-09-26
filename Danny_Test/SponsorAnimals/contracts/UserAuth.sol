@@ -139,7 +139,10 @@ contract UserAuth {
     }
 
     // Sign in using email and password
-    function signIn(string memory _identifier, string memory _password) public returns (bool) {
+    function signIn(
+        string memory _identifier,
+        string memory _password
+    ) public returns (bool) {
         User memory user = users[_identifier];
         require(user.isRegistered, "User not registered.");
         require(
@@ -176,7 +179,10 @@ contract UserAuth {
 
     // Logout for the current user
     function logoutUser() public {
-        require(bytes(currentUser).length > 0, "No user is currently signed in.");
+        require(
+            bytes(currentUser).length > 0,
+            "No user is currently signed in."
+        );
         emit UserLoggedOut(currentUser);
         currentUser = ""; // Reset current user
     }
@@ -209,5 +215,9 @@ contract UserAuth {
 
     function getCurrentAdmin() public view returns (address) {
         return (currentAdmin);
+    }
+
+    function getRegisteredUserEmails() public view returns (string[] memory) {
+        return (registeredUserEmails);
     }
 }
