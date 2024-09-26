@@ -70,9 +70,10 @@ contract UserAuth {
     function register(
         string memory _name,
         string memory _email,
+        address _refundAddress,
         uint8 _age,
-        string memory _password,
-        address _refundAddress
+        string memory _password
+
     ) public {
         bool validEmail = true;
         for (uint i = 0; i < registeredUserEmails.length; i++) {
