@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "AdminInsurancePolicy.sol"; // Import the AdminInsurancePolicy contract
-import "UserAuth.sol";
+import "./AdminInsurancePolicy.sol"; // Import the AdminInsurancePolicy contract
+import "./UserAuth.sol";
 
 contract PurchasePackage {
     AdminInsurancePolicy public adminContract;
