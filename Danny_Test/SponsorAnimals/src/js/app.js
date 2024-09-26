@@ -269,7 +269,7 @@ App = {
   handleRejectClaim: async function (event) {
     event.preventDefault();
 
-    const userAddress = $("#userAddress").val();
+    const userAddress = $("#approveUserAddress").val();
     const claimId = $("#claimId").val();
     const instance = await App.contracts.ClaimProcessing.deployed();
 
@@ -279,7 +279,7 @@ App = {
 
       try {
         await instance.approveClaim(userAddress, claimId, false, {
-          from: account,
+          from: account // Transaction options passed separately
         });
         alert("Claim rejected.");
       } catch (err) {

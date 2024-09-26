@@ -64,6 +64,7 @@ contract ClaimProcessing {
         uint256 amount = claims[user][claimId].amount;
 
         address refundAddress = userAuthContract.getUserRefundAddress(user);
+        require(refundAddress != address(0), "Invalid refund address.");
 
         if (claimValid) {
             (bool success, ) = refundAddress.call{value: amount}("");
