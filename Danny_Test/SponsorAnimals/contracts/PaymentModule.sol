@@ -49,7 +49,8 @@ contract PaymentModule {
     event PaymentProcessed(
         address indexed customer,
         uint256 insurancePurchaseID,
-        uint256 amount
+        uint256 amount,
+        uint256 customerCurrentBalance
     );
     event BalanceAdded(address indexed customer, uint256 amount);
     event AutoPayStatusChanged(
@@ -271,7 +272,8 @@ contract PaymentModule {
         emit PaymentProcessed(
             custAddress,
             insurance.insuranceSubscriptionID,
-            payAmount
+            payAmount,
+            customerBalances[custAddress] 
         );
     }
 

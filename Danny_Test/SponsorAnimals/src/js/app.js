@@ -623,6 +623,7 @@ App = {
         alert("Pay date updated successfully.");
       } catch (err) {
         console.error(err.message);
+        alert("Failed to update pay date.");
       }
     });
   },
@@ -640,7 +641,7 @@ App = {
 
       try {
         const newDate = await instance.chkInsurancePayDate(customerAddress, insuranceSubscriptionID, { from: account });
-        const dateFormatted = new Date(newDate).toDateString();
+        const dateFormatted = new Date(newDate  * 1000).toDateString();
         $("#payDateResult").text(`Next pay date for this insurance is ${dateFormatted}`);
       } catch (err) {
         console.error(err.message);
@@ -722,7 +723,7 @@ App = {
 
       try {
         const balance = await instance.getCustomerBalance({ from: account });
-        const displayBalance = balance && balance.toString() !== "0" ? (balance / 1e18).toString() : "0";
+        const displayBalance = balance && balance.toString() !== "0" ? (balance/1e18).toString() : "0";
         $("#customerBalanceDisplay").text(`Your balance is: ${displayBalance} ETH`);
       } catch (err) {
         console.error(err.message);
@@ -822,15 +823,7 @@ App = {
       const account = accounts[0];
 
       try {
-        await instance.manualPay(insuranceSubscriptionID, { from: account, value: $("#payAmountInput").val() * 1e18 });
-
-        // Fetch updated subscription details, particularly payDate
-        const insuranceSubscription = await instance.insuranceSubscribed(account, insuranceSubscriptionID);
-        const nextPayDateTimestamp = insuranceSubscription.payDate.toString();
-
-        // Convert the Unix timestamp to a readable date
-        const nextPayDate = new Date(nextPayDateTimestamp).toDateString();
-        $("#nextPayDateDisplay").text(`Your next payment is due on: <strong>${nextPayDate}</strong>`);
+        await instance.manualPay(insuranceSubscriptionID, { from: account});
 
         alert("Manual payment completed successfully.");
       } catch (err) {
@@ -852,9 +845,8 @@ App = {
 
       try {
         const [payAmt, payDate] = await instance.chkManualPayInsurance(insuranceSubscriptionID, { from: account });
-        const ethAmt = payAmt / 1e18;
-        const dateFormatted = new Date(payDate).toDateString();
-        $("#manualPayResult").text(`You need to pay ${ethAmt} ETH on ${dateFormatted}`);
+        const dateFormatted = new Date(payDate * 1000).toDateString();
+        $("#manualPayResult").text(`You need to pay ${payAmt} ETH on ${dateFormatted}`);
       } catch (err) {
         console.error(err.message);
         alert("Only Customer can view.");
